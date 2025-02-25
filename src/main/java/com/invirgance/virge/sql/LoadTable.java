@@ -31,7 +31,7 @@ import com.invirgance.convirgance.source.InputStreamSource;
 import com.invirgance.convirgance.source.Source;
 import com.invirgance.virge.Virge;
 import static com.invirgance.virge.Virge.exit;
-import com.invirgance.virge.jdbc.JDBCDrivers;
+import com.invirgance.virge.sql.jdbc.JDBCDrivers;
 import com.invirgance.virge.tool.Tool;
 import java.io.File;
 import java.io.IOException;

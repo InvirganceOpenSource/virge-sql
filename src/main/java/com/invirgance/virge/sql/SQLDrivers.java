@@ -26,7 +26,7 @@ package com.invirgance.virge.sql;
 import com.invirgance.convirgance.ConvirganceException;
 import com.invirgance.convirgance.json.JSONArray;
 import com.invirgance.convirgance.json.JSONObject;
-import com.invirgance.virge.jdbc.JDBCDrivers;
+import com.invirgance.virge.sql.jdbc.JDBCDrivers;
 import com.invirgance.virge.tool.Tool;
 import java.util.ArrayList;
 import java.util.Arrays;
