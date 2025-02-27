@@ -24,12 +24,13 @@ package com.invirgance.virge.sql;
 
 import static com.invirgance.virge.Virge.exit;
 import static com.invirgance.virge.Virge.printHelp;
+import static com.invirgance.virge.Virge.printShortHelp;
 import com.invirgance.virge.tool.Tool;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This module is meant to be used with Virge, it provides a way to execute commands against SQL databases
+ * This module is meant to be used with Virge, it provides a way to execute commands against SQL Servers
  * 
  * @author tadghh
  */
@@ -38,8 +39,6 @@ public class VirgeSQL
     public static final Map<String,Tool> lookup = new HashMap<>();
     
     public static final Tool[] tools = new Tool[] {
-        new GenerateTable(),
-        new LoadTable(),
         new SQLDrivers()
     }; 
      
@@ -66,18 +65,5 @@ public class VirgeSQL
         
         tool.execute();
     }
-    
-    public static void printShortHelp()
-    {      
-        System.out.println();
-        System.out.println("Usage: java -jar virge.jar sql <command>");
-        System.out.println();
-        System.out.println("Commands:");
-        System.out.println();
-        
-        for(Tool tool : tools) System.out.println("    " + tool.getHelp()[0]);
-        
-        System.out.println();
-        System.exit(1);
-    }
+
 }
