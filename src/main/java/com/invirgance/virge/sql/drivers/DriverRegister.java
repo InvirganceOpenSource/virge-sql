@@ -19,61 +19,42 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
 SOFTWARE.
  */
-package com.invirgance.virge.sql;
 
-import com.invirgance.convirgance.ConvirganceException;
+package com.invirgance.virge.sql.drivers;
+
 import com.invirgance.convirgance.json.JSONArray;
 import com.invirgance.convirgance.json.JSONObject;
+import static com.invirgance.virge.Virge.printHelp;
 import com.invirgance.virge.jdbc.JDBCDrivers;
 import com.invirgance.virge.tool.Tool;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
  *
- * @author jbanes
+ * @author tadghh
  */
-public class SQLDrivers implements Tool
+public class DriverRegister implements Tool
 {
-    private static final String[] COMMANDS = new String[]{
-        "list",
-        "register",
-        "unregister"
-    };
-    
-    private String command = "list";
     private String driver;
-    
     private String name;
     private String datasource;
+ 
     private final List<String> artifact = new ArrayList<>();
     private final List<String> prefix = new ArrayList<>();
     private final List<String> shortName = new ArrayList<>();
-    private final List<String> example = new ArrayList<>();;
-
+    private final List<String> example = new ArrayList<>();
+    
     @Override
     public String getName()
     {
-        return "drivers";
+        return "register";
     }
 
     @Override
     public String[] getHelp()
     {
-        return new String[] {
-            "drivers [list|register|unregister] [options]",
-            "",
-            "",
-            "    list",
-            "        Lists available jdbc drivers for connecting to databases. This is",
-            "        the default command if no command is specfied.",
-            "",
-            "        --driver <driver>",
-            "        -d <driver>",
-            "            The long name or short name of the driver",
-            "",
-            "",
+        return new String[]{
             "    register",
             "        --name <name>",
             "        -n <name>",
@@ -104,15 +85,6 @@ public class SQLDrivers implements Tool
             "        --short-name <name>",
             "        -s <name>",
             "            Add a short name for this driver",
-            "",
-            "",
-            "    unregister",
-            "        Removes the specified driver from the available database",
-            "        drivers.",
-            "",
-            "        --driver <driver>",
-            "        -d <driver>",
-            "            The long name or short name of the driver "
         };
     }
 
@@ -120,15 +92,19 @@ public class SQLDrivers implements Tool
     public boolean parse(String[] args, int start) throws Exception
     {
         for(int i=start; i<args.length; i++)
-        {
-            if(i == start && Arrays.asList(COMMANDS).contains(args[i]))
-            {
-                this.command = args[i];
-                continue;
-            }
-            
+        {            
             switch(args[i])
             {
+                case "--name":
+                case "-n":
+                    this.name = args[++i];
+                    break;
+                
+                case "--artifact":
+                case "-a":
+                    this.artifact.add(args[++i]);
+                    break;                    
+                
                 case "--driver":
                 case "-d":
                     this.driver = args[++i];
@@ -137,16 +113,6 @@ public class SQLDrivers implements Tool
                 case "--data-source":
                 case "-D":
                     this.datasource = args[++i];
-                    break;
-                    
-                case "--name":
-                case "-n":
-                    this.name = args[++i];
-                    break;
-                    
-                case "--artifact":
-                case "-a":
-                    this.artifact.add(args[++i]);
                     break;
                     
                 case "--prefix":
@@ -158,12 +124,12 @@ public class SQLDrivers implements Tool
                 case "-k":
                     this.shortName.add(args[++i]);
                     break;
-                    
-                case "--example":
-                case "-e":
-                    this.example.add(args[++i]);
-                    break;
                 
+                case "--help":
+                case "-h":
+                    printHelp(this);    
+                    break;   
+                    
                 default:
                     return false;
             }
@@ -171,66 +137,11 @@ public class SQLDrivers implements Tool
         
         return true;
     }
-    
-    private String format(JSONArray<String> list)
-    {
-        StringBuffer buffer = new StringBuffer();
-        
-        for(String item : list)
-        {
-            if(buffer.length() > 0) buffer.append(",");
-            
-            buffer.append(item);
-        }
-        
-        return buffer.toString();
-    }
-    
-    private String formatWidth(String value, int width)
-    {
-        while(value.length() < width) value += " ";
-        
-        return value;
-    }
-    
-    private String drawWidth(char c, int width)
-    {
-        StringBuffer buffer = new StringBuffer();
-        
-        while(buffer.length() < width) buffer.append(c);
-        
-        return buffer.toString();
-    }
 
     @Override
     public void execute() throws Exception
     {
-        if(command.equals("register")) registerDriver();
-        else if(command.equals("unregister")) unregisterDriver(driver);
-        else if(driver != null) printDriver(driver);
-        else printAll();
-    }
-    
-    public void unregisterDriver(String driver)
-    {
-        JDBCDrivers drivers = new JDBCDrivers();
-        JSONObject descriptor = drivers.getDescriptor(driver);
-        
-        if(descriptor == null)
-        {
-            System.err.println("Driver '" + driver + "' not found!");
-            System.exit(1);
-        }
-        
-        drivers.deleteDescriptor(descriptor);
-    }
-    
-    private void add(JSONArray<String> array, List<String> addition)
-    {
-        for(String item : addition)
-        {
-            if(!array.contains(item)) array.add(item);
-        }
+        registerDriver();    
     }
     
     public void registerDriver()
@@ -288,61 +199,15 @@ public class SQLDrivers implements Tool
         
         drivers.addDescriptor(descriptor);
         
-        System.err.println("Registered");
+        System.err.println("Registered: " + driver);
         System.out.println(descriptor.toString(4));
     }
     
-    public void printDriver(String driver)
+    private void add(JSONArray<String> array, List<String> addition)
     {
-        JDBCDrivers drivers = new JDBCDrivers();
-        JSONObject selected = drivers.getDescriptor(driver);
-        
-        if(selected == null) throw new ConvirganceException("Unknown driver: " + driver);
-        
-        System.out.println(selected.toString(4));
-    }
-    
-    public void printAll()
-    {
-        JDBCDrivers drivers = new JDBCDrivers();
-        int[] widths = new int[]{ 14, 10, 8 };
-        
-        String example;
-        String shortName;
-        
-        for(JSONObject descriptor : drivers)
+        for(String item : addition)
         {
-            shortName = !descriptor.getJSONArray("keys").isEmpty() ? descriptor.getJSONArray("keys").getString(0) : "";
-            example = !descriptor.getJSONArray("examples").isEmpty() ? descriptor.getJSONArray("examples").getString(0) : "";
-            
-            if(widths[0] < descriptor.getString("name").length()) widths[0] = descriptor.getString("name").length();
-            if(widths[1] < shortName.length()) widths[1] = shortName.length();
-            if(widths[2] < example.length()) widths[2] = example.length();
-        }
-        
-        System.out.print(formatWidth("Database Name", widths[0]));
-        System.out.print("  ");
-        System.out.print(formatWidth("Short Name", widths[1]));
-        System.out.print("  ");
-        System.out.println(formatWidth("Connection String Example", widths[2]));
-        
-        System.out.print(drawWidth('=', widths[0]));
-        System.out.print("  ");
-        System.out.print(drawWidth('=', widths[1]));
-        System.out.print("  ");
-        System.out.println(drawWidth('=', widths[2]));
-            
-        for(JSONObject descriptor : drivers)
-        {
-            shortName = !descriptor.getJSONArray("keys").isEmpty() ? descriptor.getJSONArray("keys").getString(0) : "";
-            example = !descriptor.getJSONArray("examples").isEmpty() ? descriptor.getJSONArray("examples").getString(0) : "";
-            
-            System.out.print(formatWidth(descriptor.getString("name"), widths[0]));
-            System.out.print("  ");
-            System.out.print(formatWidth(shortName, widths[1]));
-            System.out.print("  ");
-            System.out.println(formatWidth(example, widths[2]));
+            if(!array.contains(item)) array.add(item);
         }
     }
-    
 }

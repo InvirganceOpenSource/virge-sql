@@ -39,7 +39,7 @@ public class VirgeSQL
     public static final Map<String,Tool> lookup = new HashMap<>();
     
     public static final Tool[] tools = new Tool[] {
-        new SQLDrivers()
+        new DriverTools()
     }; 
      
     static {
@@ -50,7 +50,7 @@ public class VirgeSQL
     {
         Tool tool;
         
-        if(args.length <= 1) printShortHelp();
+        if(args.length < 1) printShortHelp();
 
         if(args[0].equals("--help") || args[0].equals("-h") || args[0].equals("-?"))
         {
@@ -58,7 +58,7 @@ public class VirgeSQL
         }
         
         tool = lookup.get(args[0]);
-        
+
         if(tool == null) exit(6, "Unknown tool: " + args[0]);
         
         if(!tool.parse(args, 1)) printHelp(tool);
