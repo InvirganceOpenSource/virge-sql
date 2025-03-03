@@ -81,7 +81,7 @@ public class VirgeSQL
         String command = SELECTED != null ? SELECTED.getName() + " " : "";
         
         System.out.println();
-        System.out.println("Usage: java -jar virge.jar sql " + command + "<command>");
+        System.out.println("Usage: java -jar virge.jar sql " + command);
         System.out.println();
         System.out.println("Commands:");
         System.out.println();
