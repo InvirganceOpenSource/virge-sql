@@ -91,6 +91,13 @@ public class DriverRegister implements Tool
     @Override
     public boolean parse(String[] args, int start) throws Exception
     {
+        if(start == args.length)
+        {
+            printHelp(this);   
+            
+            return true;
+        }
+        
         for(int i=start; i<args.length; i++)
         {            
             switch(args[i])
@@ -119,7 +126,7 @@ public class DriverRegister implements Tool
                 case "-p":
                     this.prefix.add(args[++i]);
                     break;
-                    
+                // TODO remove this  
                 case "--short-name":
                 case "-k":
                     this.shortName.add(args[++i]);
@@ -131,7 +138,8 @@ public class DriverRegister implements Tool
                     break;   
                     
                 default:
-                    return false;
+                    System.out.println("Unknown parameter: " + args[start]);
+                    printHelp(this);
             }
         }
         

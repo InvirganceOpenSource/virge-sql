@@ -74,7 +74,8 @@ public class DriverList implements Tool
                     break;
                     
                 default:
-                    return false;
+                    System.out.println("Unknown parameter: " + args[start]);
+                    printHelp(this);
             }
         }
         

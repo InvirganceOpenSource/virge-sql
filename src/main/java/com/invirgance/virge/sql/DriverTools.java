@@ -26,8 +26,6 @@ import com.invirgance.virge.sql.drivers.DriverList;
 import com.invirgance.virge.sql.drivers.DriverRegister;
 import com.invirgance.virge.sql.drivers.DriverUnregister;
 import com.invirgance.virge.tool.Tool;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -57,41 +55,34 @@ public class DriverTools implements Tool
     @Override
     public String[] getHelp()
     {
-        List<String> info = new ArrayList<>();
-        
-        info.add("drivers [list|register|unregister] [options]");
-    
-        for(int i = 0; i < TOOLS.length; i++) 
-        {
-            info.add("");
-            
-            // TODO: private method in virge that should be swapped out
-            String[] toolHelp = TOOLS[i].getHelp();
-            
-            for(String line : toolHelp)
-            {
-                info.add(line);
-            }
-        }
-        
-        // TODO: yucky
-        return info.toArray(new String[0]);
+        return new String[] {
+            "drivers [list|register|unregister]",
+            "",
+            "\tlist - list the available drivers for connecting to databases.",
+            "\tregister - register a new database driver for creating connections.",
+            "\tunregister - unregister a driver so it can no longer be used to create connections."
+        };
     }
 
     @Override
     public boolean parse(String[] args, int start) throws Exception
-    {
-        for(int i=start; i<args.length; i++)
+    { 
+        if(start == args.length) return false;
+        
+        for(Tool tool : TOOLS)
+        { 
+            if(tool.getName().equals(args[start]))
+            {
+                this.tool = tool;
+                return this.tool.parse(args, start + 1);
+            }  
+        }
+
+        if("-h".equals(args[start]) || "--help".equals(args[start])) return false;
+        
+        if(start < args.length)
         {
-            for(Tool tool : TOOLS)
-            { 
-                if(tool.getName().equals(args[start]))
-                {
-                    this.tool = tool;
-                    
-                    return this.tool.parse(args, start + 1);
-                }  
-            }
+            System.out.println("Unknown command: " + args[start]);
         }
         
         return false;

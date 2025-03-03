@@ -22,9 +22,8 @@ SOFTWARE.
 
 package com.invirgance.virge.sql;
 
-import static com.invirgance.virge.Virge.printHelp;
-import static com.invirgance.virge.Virge.printModuleHelp;
 import com.invirgance.virge.tool.Tool;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,30 +43,55 @@ public class VirgeSQL
     static {
         for(Tool tool : tools) lookup.put(tool.getName(), tool);
     }
-    
-//    public static void printToolsBre
-    
+        private static void print(String[] lines, PrintStream out)
+    {
+        for(String line : lines)
+        {
+            out.println(line);
+        }
+        
+        out.println();
+        out.println();
+    }
+
+    public static void printModuleHelp()
+    {
+             
+        System.out.println();
+        System.out.println("Usage: java -jar virge.jar sql <command>");
+        System.out.println();
+        System.out.println("Commands:");
+        System.out.println();
+        
+        for(Tool help : tools)
+        {
+            print(help.getHelp(), System.out);
+        }
+      
+        System.exit(1);
+    }
     public static void main(String[] args) throws Exception
     {
-        Tool tool = lookup.get(args[0]);
-        
-        if(tool == null) System.out.println("Unknown tool: " + args[0]);
+        Tool tool;
         
         // NOTE: -? might be a special pattern in some shells, zsh?
-        if(args.length == 0 || tool == null || args[0].equals("--help") || args[0].equals("-h") || args[0].equals("-?"))
-        {
-            for(Tool help : tools)
-            {
-                // TODO: ideally 'sql' would come from modules.json in virge
-                // that way printModuleHelp only has one paramater and would dynamically update with the json file if changes are made.
-                // TODO: add brief help
-                printModuleHelp(help, "sql");
-            }
-            
+        if(args.length == 0 || args[0].equals("--help") || args[0].equals("-h") || args[0].equals("-?"))
+        {   
+            printModuleHelp();
+         
             return;
         }
+        
+        tool = lookup.get(args[0]);
 
-        if(!tool.parse(args, 1)) printHelp(tool);
+        if(tool == null) 
+        {
+            System.out.println("Unknown tool: " + args[0]);
+            printModuleHelp();
+        }
+        
+        if(!tool.parse(args, 1)) printModuleHelp();
+        
         
         tool.execute();
     }
