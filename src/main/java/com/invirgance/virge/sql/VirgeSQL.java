@@ -34,6 +34,8 @@ import java.util.Map;
  */
 public class VirgeSQL 
 {
+    public static Tool SELECTED;
+    
     public static final Map<String,Tool> lookup = new HashMap<>();
     
     public static final Tool[] tools = new Tool[] {
@@ -43,7 +45,8 @@ public class VirgeSQL
     static {
         for(Tool tool : tools) lookup.put(tool.getName(), tool);
     }
-        private static void print(String[] lines, PrintStream out)
+    
+    public static void print(String[] lines, PrintStream out)
     {
         for(String line : lines)
         {
@@ -53,10 +56,22 @@ public class VirgeSQL
         out.println();
         out.println();
     }
-
+    
+    public static void printHelp(Tool selected)
+    {
+        
+        System.out.println();
+        System.out.println("Usage: java -jar virge.jar sql " + SELECTED.getName() + " " + selected.getName());
+        System.out.println();
+        System.out.println("Commands:");
+        System.out.println();
+        
+        print(selected.getHelp(), System.out);
+        
+        System.exit(1);
+    }
     public static void printModuleHelp()
     {
-             
         System.out.println();
         System.out.println("Usage: java -jar virge.jar sql <command>");
         System.out.println();
@@ -70,9 +85,10 @@ public class VirgeSQL
       
         System.exit(1);
     }
+    
     public static void main(String[] args) throws Exception
     {
-        Tool tool;
+        // Tool tool;
         
         // NOTE: -? might be a special pattern in some shells, zsh?
         if(args.length == 0 || args[0].equals("--help") || args[0].equals("-h") || args[0].equals("-?"))
@@ -82,18 +98,17 @@ public class VirgeSQL
             return;
         }
         
-        tool = lookup.get(args[0]);
+        SELECTED = lookup.get(args[0]);
 
-        if(tool == null) 
+        if(SELECTED == null) 
         {
             System.out.println("Unknown tool: " + args[0]);
             printModuleHelp();
         }
         
-        if(!tool.parse(args, 1)) printModuleHelp();
+        if(!SELECTED.parse(args, 1)) printModuleHelp();
         
-        
-        tool.execute();
+        SELECTED.execute();
     }
 
 }

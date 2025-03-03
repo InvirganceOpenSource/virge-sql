@@ -24,8 +24,8 @@ package com.invirgance.virge.sql.drivers;
 
 import com.invirgance.convirgance.json.JSONArray;
 import com.invirgance.convirgance.json.JSONObject;
-import static com.invirgance.virge.Virge.printHelp;
 import com.invirgance.virge.jdbc.JDBCDrivers;
+import static com.invirgance.virge.sql.VirgeSQL.printHelp;
 import com.invirgance.virge.tool.Tool;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,6 +91,7 @@ public class DriverRegister implements Tool
     @Override
     public boolean parse(String[] args, int start) throws Exception
     {
+        // No parameter
         if(start == args.length)
         {
             printHelp(this);   
@@ -138,8 +139,7 @@ public class DriverRegister implements Tool
                     break;   
                     
                 default:
-                    System.out.println("Unknown parameter: " + args[start]);
-                    printHelp(this);
+                    return false;
             }
         }
         

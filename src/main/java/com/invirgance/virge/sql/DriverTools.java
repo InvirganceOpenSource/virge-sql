@@ -22,6 +22,7 @@ SOFTWARE.
 
 package com.invirgance.virge.sql;
 
+import static com.invirgance.virge.sql.VirgeSQL.printHelp;
 import com.invirgance.virge.sql.drivers.DriverList;
 import com.invirgance.virge.sql.drivers.DriverRegister;
 import com.invirgance.virge.sql.drivers.DriverUnregister;
@@ -63,7 +64,7 @@ public class DriverTools implements Tool
             "\tunregister - unregister a driver so it can no longer be used to create connections."
         };
     }
-
+     
     @Override
     public boolean parse(String[] args, int start) throws Exception
     { 
@@ -74,7 +75,20 @@ public class DriverTools implements Tool
             if(tool.getName().equals(args[start]))
             {
                 this.tool = tool;
-                return this.tool.parse(args, start + 1);
+                
+                if(!this.tool.parse(args, start + 1))
+                {
+                    if(args.length != start+1){
+                        System.out.println("Unknown parameter: " + args[start + 1]);
+                    }
+                    
+                    printHelp(this.tool);
+                }
+                else
+                {
+                    return true;
+                }
+             
             }  
         }
 
