@@ -38,12 +38,17 @@ public class VirgeSQL
     
     public static final Map<String,Tool> lookup = new HashMap<>();
     
+    public static final Map<String,String> topHelp = new HashMap<>();
+    
     public static final Tool[] tools = new Tool[] {
         new DriverTools()
     }; 
      
     static {
         for(Tool tool : tools) lookup.put(tool.getName(), tool);
+        
+        // TODO Modify Tool interface to support short tool description
+        topHelp.put("drivers", "List and manage available database drivers.");
     }
     
     public static void print(String[] lines, PrintStream out)
@@ -70,19 +75,32 @@ public class VirgeSQL
         
         System.exit(1);
     }
+    
     public static void printModuleHelp()
     {
+        String command = SELECTED != null ? SELECTED.getName() + " " : "";
+        
         System.out.println();
-        System.out.println("Usage: java -jar virge.jar sql <command>");
+        System.out.println("Usage: java -jar virge.jar sql " + command + "<command>");
         System.out.println();
         System.out.println("Commands:");
         System.out.println();
         
-        for(Tool help : tools)
+        if(SELECTED != null)
         {
-            print(help.getHelp(), System.out);
+            print(SELECTED.getHelp(), System.out);
         }
-      
+        else
+        {
+            // NOTE short description should be an interface.
+            for(Tool help : tools)
+            {
+                System.out.println("\t" + help.getName() + " - " + topHelp.get(help.getName()));
+            }
+            
+            System.out.println();
+        }
+              
         System.exit(1);
     }
     
