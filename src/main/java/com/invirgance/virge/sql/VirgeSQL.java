@@ -22,9 +22,8 @@ SOFTWARE.
 
 package com.invirgance.virge.sql;
 
-import static com.invirgance.virge.Virge.exit;
 import static com.invirgance.virge.Virge.printHelp;
-import static com.invirgance.virge.Virge.printShortHelp;
+import static com.invirgance.virge.Virge.printModuleHelp;
 import com.invirgance.virge.tool.Tool;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,22 +44,29 @@ public class VirgeSQL
     static {
         for(Tool tool : tools) lookup.put(tool.getName(), tool);
     }
- 
+    
+//    public static void printToolsBre
+    
     public static void main(String[] args) throws Exception
     {
-        Tool tool;
+        Tool tool = lookup.get(args[0]);
         
-        if(args.length < 1) printShortHelp();
-
-        if(args[0].equals("--help") || args[0].equals("-h") || args[0].equals("-?"))
+        if(tool == null) System.out.println("Unknown tool: " + args[0]);
+        
+        // NOTE: -? might be a special pattern in some shells, zsh?
+        if(args.length == 0 || tool == null || args[0].equals("--help") || args[0].equals("-h") || args[0].equals("-?"))
         {
-            printHelp(null);
+            for(Tool help : tools)
+            {
+                // TODO: ideally 'sql' would come from modules.json in virge
+                // that way printModuleHelp only has one paramater and would dynamically update with the json file if changes are made.
+                // TODO: add brief help
+                printModuleHelp(help, "sql");
+            }
+            
+            return;
         }
-        
-        tool = lookup.get(args[0]);
 
-        if(tool == null) exit(6, "Unknown tool: " + args[0]);
-        
         if(!tool.parse(args, 1)) printHelp(tool);
         
         tool.execute();
