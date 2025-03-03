@@ -87,7 +87,13 @@ public class DriverRegister implements Tool
             "            Add a short name for this driver",
         };
     }
-
+    
+    @Override 
+    public String getShortDescription()
+    {
+        return "\t" + getName() + " - register a new database driver for creating connections.";
+    }
+    
     @Override
     public boolean parse(String[] args, int start) throws Exception
     {

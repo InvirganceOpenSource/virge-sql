@@ -54,7 +54,13 @@ public class DriverUnregister implements Tool
             "        -d <driver>",
             "            The long name or short name of the driver "};
     }
-
+    
+    @Override 
+    public String getShortDescription()
+    {
+        return "\t" + getName() + " - unregister a driver so it can no longer be used to create connections.";
+    }
+    
     @Override
     public boolean parse(String[] args, int start) throws Exception
     {

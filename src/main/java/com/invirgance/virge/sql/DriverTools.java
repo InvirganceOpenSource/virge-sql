@@ -27,7 +27,7 @@ import com.invirgance.virge.sql.drivers.DriverList;
 import com.invirgance.virge.sql.drivers.DriverRegister;
 import com.invirgance.virge.sql.drivers.DriverUnregister;
 import com.invirgance.virge.tool.Tool;
-
+import java.util.ArrayList;
 /**
  *
  * @author tadghh
@@ -56,11 +56,20 @@ public class DriverTools implements Tool
     @Override
     public String[] getHelp()
     {
-        return new String[] {
-            "\tlist - list the available drivers for connecting to databases.",
-            "\tregister - register a new database driver for creating connections.",
-            "\tunregister - unregister a driver so it can no longer be used to create connections."
-        };
+        ArrayList<String> help = new ArrayList<>();
+        
+        for(Tool tool : TOOLS)
+        {
+            help.add(tool.getShortDescription());
+        }
+        
+        return help.toArray(new String[0]);
+    }
+    
+    @Override
+    public String getShortDescription()
+    {
+        return "\t" + getName() + " - List and manage available database drivers.";
     }
     
     @Override

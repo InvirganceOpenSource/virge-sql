@@ -24,8 +24,8 @@ package com.invirgance.virge.sql.drivers;
 
 import com.invirgance.convirgance.ConvirganceException;
 import com.invirgance.convirgance.json.JSONObject;
-import static com.invirgance.virge.Virge.printHelp;
 import com.invirgance.virge.jdbc.JDBCDrivers;
+import static com.invirgance.virge.sql.VirgeSQL.printHelp;
 import com.invirgance.virge.tool.Tool;
 
 /**
@@ -55,7 +55,13 @@ public class DriverList implements Tool
             "            The long name or short name of the driver",
         };
     }
-
+    
+    @Override 
+    public String getShortDescription()
+    {
+        return "\t" + getName() +" - list the available drivers for connecting to databases.";
+    }
+    
     @Override
     public boolean parse(String[] args, int start) throws Exception
     {
