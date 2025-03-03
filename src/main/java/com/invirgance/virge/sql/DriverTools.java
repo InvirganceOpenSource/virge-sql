@@ -57,8 +57,6 @@ public class DriverTools implements Tool
     public String[] getHelp()
     {
         return new String[] {
-            "drivers [list|register|unregister]",
-            "",
             "\tlist - list the available drivers for connecting to databases.",
             "\tregister - register a new database driver for creating connections.",
             "\tunregister - unregister a driver so it can no longer be used to create connections."
