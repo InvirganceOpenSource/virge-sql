@@ -25,7 +25,9 @@ package com.invirgance.virge.sql.drivers;
 import com.invirgance.convirgance.json.JSONArray;
 import com.invirgance.convirgance.json.JSONObject;
 import com.invirgance.virge.jdbc.JDBCDrivers;
-import static com.invirgance.virge.sql.VirgeSQL.printHelp;
+import static com.invirgance.virge.sql.DriverTools.COMMAND_DESCRIPTION_SPACING;
+import static com.invirgance.virge.sql.DriverTools.COMMAND_SPACING;
+import static com.invirgance.virge.sql.DriverTools.printToolOptions;
 import com.invirgance.virge.tool.Tool;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,33 +55,33 @@ public class DriverRegister implements Tool
     @Override
     public String[] getHelp()
     {
-        return new String[]{
-            "    register",
-            "        --name <name>",
-            "        -n <name>",
-            "            Set the name of the driver. If the name matches an existing",
-            "            driver, the existing driver will be updated.",
+        return new String[]
+        {
+            COMMAND_SPACING + "--name <name>",
+            COMMAND_SPACING + "-n <name>",
+            COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING + "Set the name of the driver. If the name matches an existing",
+            COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING + "driver, the existing driver will be updated.",
+            COMMAND_SPACING + "",
+            COMMAND_SPACING + "--artifact <groupId:artifactId:version>",
+            COMMAND_SPACING + "-a <groupId:artifactId:version>",
+            COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING + "The Maven coordinates of the JDBC driver. This option can be",
+            COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING + "specified more than once if multiple JARs are needed.",
             "",
-            "        --artifact <groupId:artifactId:version>",
-            "        -a <groupId:artifactId:version>",
-            "            The Maven coordinates of the JDBC driver. This option can be",
-            "            specified more than once if multiple JARs are needed.",
+            COMMAND_SPACING + "--driver <className>",
+            COMMAND_SPACING + "-d <className>",
+            COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING + "The class name of the JDBC Driver implementation.",
             "",
-            "        --driver <className>",
-            "        -d <className>",
-            "            The class name of the JDBC Driver implementation.",
+            COMMAND_SPACING + "--data-source <className>",
+            COMMAND_SPACING + "-D <className>",
+            COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING + "The class name of the JDBC DataSource implementation. If",
+            COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING + "not specified, a default Data Source wrapping the Driver",
+            COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING + "will be used.",
             "",
-            "        --data-source <className>",
-            "        -D <className>",
-            "            The class name of the JDBC DataSource implementation. If",
-            "            not specified, a default Data Source wrapping the Driver",
-            "            will be used.",
-            "",
-            "        --prefix <url prefix>",
-            "        -p <url prefix>",
-            "            The url prefix used by this driver. e.g. jdbc:oracle:",
-            "            This option can be specified more than once if multiple",
-            "            prefixes are supported.",
+            COMMAND_SPACING + "--prefix <url prefix>",
+            COMMAND_SPACING + "-p <url prefix>",
+            COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING + "The url prefix used by this driver. e.g. jdbc:oracle:",
+            COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING + "This option can be specified more than once if multiple",
+            COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING + "prefixes are supported.",
             ""
         };
     }
@@ -87,18 +89,14 @@ public class DriverRegister implements Tool
     @Override 
     public String getShortDescription()
     {
-        return "\t" + getName() + " - register a new database driver for creating connections.";
+        return "Register a new database driver for creating connections.";
     }
     
     @Override
     public boolean parse(String[] args, int start) throws Exception
     {
-        if(start == args.length)
-        {
-            printHelp(this);   
-            
-            return true;
-        }
+        // No parameter
+        if(start == args.length) return false; 
         
         for(int i=start; i<args.length; i++)
         {            
@@ -131,7 +129,7 @@ public class DriverRegister implements Tool
                 
                 case "--help":
                 case "-h":
-                    printHelp(this);    
+                    printToolOptions(this);      
                     break;   
                     
                 default:

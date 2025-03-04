@@ -25,7 +25,9 @@ package com.invirgance.virge.sql.drivers;
 import com.invirgance.convirgance.ConvirganceException;
 import com.invirgance.convirgance.json.JSONObject;
 import com.invirgance.virge.jdbc.JDBCDrivers;
-import static com.invirgance.virge.sql.VirgeSQL.printHelp;
+import static com.invirgance.virge.sql.DriverTools.COMMAND_DESCRIPTION_SPACING;
+import static com.invirgance.virge.sql.DriverTools.COMMAND_SPACING;
+import static com.invirgance.virge.sql.DriverTools.printToolOptions;
 import com.invirgance.virge.tool.Tool;
 
 /**
@@ -46,20 +48,16 @@ public class DriverList implements Tool
     public String[] getHelp()
     {
         return new String[]{
-            "    list",
-            "        Lists available jdbc drivers for connecting to databases. This is",
-            "        the default command if no command is specfied.",
-            "",
-            "        --driver <driver>",
-            "        -d <driver>",
-            "            The long name or short name of the driver",
+           COMMAND_SPACING + "--driver <driver>",
+           COMMAND_SPACING + "-d <driver>",
+           COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING  + "The name of the driver",
         };
     }
     
     @Override 
     public String getShortDescription()
     {
-        return "\t" + getName() +" - list the available drivers for connecting to databases.";
+        return "List the available drivers for connecting to databases.";
     }
     
     @Override
@@ -76,7 +74,7 @@ public class DriverList implements Tool
                     
                 case "--help":
                 case "-h":
-                    printHelp(this);    
+                    printToolOptions(this);    
                     break;
                     
                 default:

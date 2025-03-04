@@ -25,7 +25,9 @@ package com.invirgance.virge.sql.drivers;
 import com.invirgance.convirgance.ConvirganceException;
 import com.invirgance.convirgance.json.JSONObject;
 import com.invirgance.virge.jdbc.JDBCDrivers;
-import static com.invirgance.virge.sql.VirgeSQL.printHelp;
+import static com.invirgance.virge.sql.DriverTools.COMMAND_DESCRIPTION_SPACING;
+import static com.invirgance.virge.sql.DriverTools.COMMAND_SPACING;
+import static com.invirgance.virge.sql.DriverTools.printToolOptions;
 import com.invirgance.virge.tool.Tool;
 
 /**
@@ -45,32 +47,25 @@ public class DriverUnregister implements Tool
     @Override
     public String[] getHelp()
     {
-        return new String[]{            
-            "    unregister",
-            "        Removes the specified driver from the available database",
-            "        drivers.",
-            "",
-            "        --driver <driver>",
-            "        -d <driver>",
-            "            The name of the driver "};
+        return new String[]
+        {
+            COMMAND_SPACING + "--driver <driver>",
+            COMMAND_SPACING + "-d <driver>",
+            COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING + "The name of the driver "
+        };
     }
     
     @Override 
     public String getShortDescription()
     {
-        return "\t" + getName() + " - unregister a driver so it can no longer be used to create connections.";
+        return "Unregister a driver so it can no longer be used to create connections.";
     }
     
     @Override
     public boolean parse(String[] args, int start) throws Exception
     {
         // No parameter
-        if(start == args.length)
-        {
-            printHelp(this);   
-            
-            return true;
-        }
+        if(start == args.length) return false;
         
         for(int i=start; i<args.length; i++)
         {
@@ -83,7 +78,7 @@ public class DriverUnregister implements Tool
                 
                 case "--help":
                 case "-h":
-                    printHelp(this);    
+                    printToolOptions(this);    
                     break;    
                     
                 default:

@@ -22,6 +22,7 @@ SOFTWARE.
 
 package com.invirgance.virge.sql;
 
+import static com.invirgance.virge.sql.DriverTools.COMMAND_SPACING;
 import com.invirgance.virge.tool.Tool;
 import java.io.PrintStream;
 import java.util.HashMap;
@@ -34,6 +35,8 @@ import java.util.Map;
  */
 public class VirgeSQL 
 {
+    private static final String HELP = "Tools for interating with SQL Databases (currently only supports Driver registration/unregistration).";
+    
     public static Tool SELECTED;
     
     public static final Map<String,Tool> lookup = new HashMap<>();
@@ -61,7 +64,9 @@ public class VirgeSQL
     {
         
         System.out.println();
-        System.out.println("Usage: virge.jar sql " + SELECTED.getName() + " " + selected.getName());
+        System.out.println("Usage: virge.jar sql " + SELECTED.getName());
+        System.out.println();
+        System.out.println(selected.getShortDescription());
         System.out.println();
         System.out.println("Commands:");
         System.out.println();
@@ -78,6 +83,8 @@ public class VirgeSQL
         System.out.println();
         System.out.println("Usage: virge.jar sql " + command);
         System.out.println();
+        System.out.println(HELP);
+        System.out.println();
         System.out.println("Commands:");
         System.out.println();
         
@@ -89,7 +96,7 @@ public class VirgeSQL
         {
             for(Tool help : tools)
             {
-                System.out.println(help.getShortDescription());
+                System.out.println(COMMAND_SPACING + help.getName() + " - " + help.getShortDescription());
             }
             
             System.out.println();
@@ -112,12 +119,12 @@ public class VirgeSQL
 
         if(SELECTED == null) 
         {
-            System.out.println("\nUnknown Tool: " + args[0]);
+            System.err.println("\nUnknown Command: " + args[0]);
             
             printModuleHelp();
         }
         
-        if(!SELECTED.parse(args, 1)) printModuleHelp();
+        if(!SELECTED.parse(args, 1)) printHelp(SELECTED);
         
         SELECTED.execute();
     }

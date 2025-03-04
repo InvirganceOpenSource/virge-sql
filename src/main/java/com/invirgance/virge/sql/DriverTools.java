@@ -22,7 +22,8 @@ SOFTWARE.
 
 package com.invirgance.virge.sql;
 
-import static com.invirgance.virge.sql.VirgeSQL.printHelp;
+import static com.invirgance.virge.sql.VirgeSQL.SELECTED;
+import static com.invirgance.virge.sql.VirgeSQL.print;
 import com.invirgance.virge.sql.drivers.DriverList;
 import com.invirgance.virge.sql.drivers.DriverRegister;
 import com.invirgance.virge.sql.drivers.DriverUnregister;
@@ -34,6 +35,8 @@ import java.util.ArrayList;
  */
 public class DriverTools implements Tool
 {
+    public static final String COMMAND_SPACING = "    ";
+    public static final String COMMAND_DESCRIPTION_SPACING = "   ";
     private static final Tool[] TOOLS = new Tool[]{
         new DriverList(),
         new DriverRegister(),
@@ -53,6 +56,24 @@ public class DriverTools implements Tool
         return "drivers";
     }
     
+
+    
+    public static void printToolOptions(Tool selected)
+    {
+        
+        System.out.println();
+        System.out.println("Usage: virge.jar sql " + SELECTED.getName() + " " + selected.getName());
+        System.out.println();
+        System.out.println(selected.getShortDescription());
+        System.out.println();
+        System.out.println("Options:");
+        System.out.println();
+        
+        print(selected.getHelp(), System.out);
+        
+        System.exit(1);
+    }
+    
     @Override
     public String[] getHelp()
     {
@@ -60,7 +81,7 @@ public class DriverTools implements Tool
         
         for(Tool tool : TOOLS)
         {
-            help.add(tool.getShortDescription());
+            help.add(COMMAND_SPACING + tool.getName() + " - " + tool.getShortDescription());
         }
         
         return help.toArray(new String[0]);
@@ -69,14 +90,15 @@ public class DriverTools implements Tool
     @Override
     public String getShortDescription()
     {
-        return "\t" + getName() + " - List and manage available database drivers.";
+        return "List and manage available database drivers.";
     }
     
     @Override
     public boolean parse(String[] args, int start) throws Exception
     { 
         if(start == args.length) return false;
-        
+        if("-h".equals(args[start]) || "--help".equals(args[start])) return false;
+
         for(Tool tool : TOOLS)
         { 
             if(tool.getName().equals(args[start]))
@@ -85,28 +107,19 @@ public class DriverTools implements Tool
                 
                 if(!this.tool.parse(args, start + 1))
                 {                    
-                    if(args.length != start+1)
-                    {
-                        System.err.println("\nUnknown parameter: " + args[start + 1]);
-                    }
+                    if(args.length != start+1) System.err.println("\nUnknown option: " + args[start + 1]);
                     
-                    printHelp(this.tool);
+                    printToolOptions(this.tool);
                 }
                 else
                 {
                     return true;
                 }
-             
             }  
         }
-
-        if("-h".equals(args[start]) || "--help".equals(args[start])) return false;
         
-        if(start < args.length)
-        {
-            System.err.println("\nUnknown command: " + args[start]);
-        }
-        
+        System.err.println("\nUnknown command: " + args[start]);
+             
         return false;
     }
 
