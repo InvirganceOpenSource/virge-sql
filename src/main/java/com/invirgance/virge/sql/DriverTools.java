@@ -23,8 +23,7 @@ SOFTWARE.
 package com.invirgance.virge.sql;
 
 import static com.invirgance.virge.sql.VirgeSQL.HELP_SPACING;
-import static com.invirgance.virge.sql.VirgeSQL.SELECTED;
-import static com.invirgance.virge.sql.VirgeSQL.print;
+import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
 import com.invirgance.virge.sql.drivers.DriverList;
 import com.invirgance.virge.sql.drivers.DriverRegister;
 import com.invirgance.virge.sql.drivers.DriverUnregister;
@@ -56,21 +55,6 @@ public class DriverTools implements Tool
         return "drivers";
     }
     
-    public static void printToolOptions(Tool selected)
-    {
-        
-        System.out.println();
-        System.out.println("Usage: virge.jar sql " + SELECTED.getName() + " " + selected.getName());
-        System.out.println();
-        System.out.println(selected.getShortDescription());
-        System.out.println();
-        System.out.println("Options:");
-        System.out.println();
-        
-        print(selected.getHelp(), System.out);
-        
-        System.exit(1);
-    }
     
     @Override
     public String[] getHelp()
@@ -107,7 +91,7 @@ public class DriverTools implements Tool
                 {                    
                     if(args.length != start+1) System.err.println("\nUnknown option: " + args[start + 1]);
                     
-                    printToolOptions(this.tool);
+                    printToolHelp(this.tool);
                 }
                 else
                 {

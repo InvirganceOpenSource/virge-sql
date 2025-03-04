@@ -79,45 +79,34 @@ public class VirgeSQL
             System.out.println(selected.getShortDescription());
             System.out.println();
             System.out.println("Options:");
-        }
-        else
-        {   
-            if(SELECTED != null)
-            {
-                System.out.println(SELECTED.getShortDescription());
-            }
-            else
-            {
-               System.out.println(HELP);
-            }
-            
             System.out.println();
-            System.out.println("Commands:");
-        }
-        
-        System.out.println();
-        
-        if(selected != null)
-        {
+            
             print(selected.getHelp(), System.out);
         }
-        else
-        {   
-            if(SELECTED != null)
-            {
-                print(SELECTED.getHelp(), System.out);
-            }
-            else
-            {
-                for(Tool help : tools)
-                {
-                    System.out.println(HELP_SPACING + help.getName() + " - " + help.getShortDescription());
-                }  
-                
-                System.out.println();
-            }
+        else if(SELECTED != null)
+        {
+            System.out.println(SELECTED.getShortDescription());
+            System.out.println();
+            System.out.println("Commands:");
+            System.out.println();
+            
+            print(SELECTED.getHelp(), System.out); 
         }
-    
+        else
+        {
+            System.out.println(HELP);
+            System.out.println();
+            System.out.println("Commands:");
+            System.out.println();
+
+            for(Tool help : tools)
+            {
+                System.out.println(HELP_SPACING + help.getName() + " - " + help.getShortDescription());
+            }  
+
+            System.out.println(); 
+        }
+        
         System.exit(1);
     }
     
@@ -137,7 +126,7 @@ public class VirgeSQL
         {
             System.err.println("\nUnknown Command: " + args[0]);
             
-             printToolHelp(null);
+            printToolHelp(null);
         }
         
         if(!SELECTED.parse(args, 1)) printToolHelp(null);

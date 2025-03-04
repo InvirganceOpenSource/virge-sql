@@ -25,9 +25,9 @@ package com.invirgance.virge.sql.drivers;
 import com.invirgance.convirgance.ConvirganceException;
 import com.invirgance.convirgance.json.JSONObject;
 import com.invirgance.virge.jdbc.JDBCDrivers;
-import static com.invirgance.virge.sql.DriverTools.printToolOptions;
 import static com.invirgance.virge.sql.VirgeSQL.HELP_DESCRIPTION_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.HELP_SPACING;
+import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
 import com.invirgance.virge.tool.Tool;
 
 /**
@@ -74,7 +74,7 @@ public class DriverList implements Tool
                     
                 case "--help":
                 case "-h":
-                    printToolOptions(this);    
+                    printToolHelp(this);    
                     break;
                     
                 default:
