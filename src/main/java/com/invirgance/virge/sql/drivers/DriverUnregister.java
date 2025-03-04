@@ -52,7 +52,7 @@ public class DriverUnregister implements Tool
             "",
             "        --driver <driver>",
             "        -d <driver>",
-            "            The long name or short name of the driver "};
+            "            The name of the driver "};
     }
     
     @Override 

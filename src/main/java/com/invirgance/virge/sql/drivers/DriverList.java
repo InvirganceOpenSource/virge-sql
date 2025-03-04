@@ -107,43 +107,35 @@ public class DriverList implements Tool
     public void printAll()
     {
         JDBCDrivers drivers = new JDBCDrivers();
-        int[] widths = new int[]{ 14, 10, 8 };
+        
+        // Print command widths (Name: 14, Example: 8)
+        int[] widths = new int[]{ 14, 8 };
         
         String example;
-        String shortName;
         
         for(JSONObject descriptor : drivers)
         {
-            shortName = !descriptor.getJSONArray("keys").isEmpty() ? descriptor.getJSONArray("keys").getString(0) : "";
             example = !descriptor.getJSONArray("examples").isEmpty() ? descriptor.getJSONArray("examples").getString(0) : "";
             
             if(widths[0] < descriptor.getString("name").length()) widths[0] = descriptor.getString("name").length();
-            if(widths[1] < shortName.length()) widths[1] = shortName.length();
-            if(widths[2] < example.length()) widths[2] = example.length();
+            if(widths[1] < example.length()) widths[1] = example.length();
         }
         
         System.out.print(formatWidth("Database Name", widths[0]));
         System.out.print("  ");
-        System.out.print(formatWidth("Short Name", widths[1]));
-        System.out.print("  ");
-        System.out.println(formatWidth("Connection String Example", widths[2]));
+        System.out.println(formatWidth("Connection String Example", widths[1]));
         
         System.out.print(drawWidth('=', widths[0]));
         System.out.print("  ");
-        System.out.print(drawWidth('=', widths[1]));
-        System.out.print("  ");
-        System.out.println(drawWidth('=', widths[2]));
+        System.out.println(drawWidth('=', widths[1]));
             
         for(JSONObject descriptor : drivers)
         {
-            shortName = !descriptor.getJSONArray("keys").isEmpty() ? descriptor.getJSONArray("keys").getString(0) : "";
             example = !descriptor.getJSONArray("examples").isEmpty() ? descriptor.getJSONArray("examples").getString(0) : "";
             
             System.out.print(formatWidth(descriptor.getString("name"), widths[0]));
             System.out.print("  ");
-            System.out.print(formatWidth(shortName, widths[1]));
-            System.out.print("  ");
-            System.out.println(formatWidth(example, widths[2]));
+            System.out.println(formatWidth(example, widths[1]));
         }
     }
     

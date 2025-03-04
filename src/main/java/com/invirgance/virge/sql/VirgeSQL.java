@@ -112,7 +112,8 @@ public class VirgeSQL
 
         if(SELECTED == null) 
         {
-            System.out.println("Unknown tool: " + args[0]);
+            System.out.println("\n\u001B[33mUnknown Tool:\u001B[0m " + args[0]);
+            
             printModuleHelp();
         }
         

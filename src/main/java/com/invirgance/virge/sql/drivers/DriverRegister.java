@@ -42,7 +42,6 @@ public class DriverRegister implements Tool
  
     private final List<String> artifact = new ArrayList<>();
     private final List<String> prefix = new ArrayList<>();
-    private final List<String> shortName = new ArrayList<>();
     private final List<String> example = new ArrayList<>();
     
     @Override
@@ -81,10 +80,7 @@ public class DriverRegister implements Tool
             "            The url prefix used by this driver. e.g. jdbc:oracle:",
             "            This option can be specified more than once if multiple",
             "            prefixes are supported.",
-            "",
-            "        --short-name <name>",
-            "        -s <name>",
-            "            Add a short name for this driver",
+            ""
         };
     }
     
@@ -97,7 +93,6 @@ public class DriverRegister implements Tool
     @Override
     public boolean parse(String[] args, int start) throws Exception
     {
-        // No parameter
         if(start == args.length)
         {
             printHelp(this);   
@@ -133,11 +128,6 @@ public class DriverRegister implements Tool
                 case "-p":
                     this.prefix.add(args[++i]);
                     break;
-                // TODO remove this  
-                case "--short-name":
-                case "-k":
-                    this.shortName.add(args[++i]);
-                    break;
                 
                 case "--help":
                 case "-h":
@@ -168,7 +158,6 @@ public class DriverRegister implements Tool
             descriptor = new JSONObject(true);
             
             descriptor.put("name", name);
-            descriptor.put("keys", new JSONArray());
             descriptor.put("artifact", new JSONArray());
             descriptor.put("driver", "");
             // TODO maybe a problem? Do we need to shrinkwrap back over to virge?
@@ -182,7 +171,6 @@ public class DriverRegister implements Tool
         if(driver != null) descriptor.put("driver", driver);
         if(datasource != null) descriptor.put("datasource", datasource);
         
-        add(descriptor.getJSONArray("keys"), shortName);
         add(descriptor.getJSONArray("artifact"), artifact);
         add(descriptor.getJSONArray("prefixes"), prefix);
         add(descriptor.getJSONArray("examples"), example);
