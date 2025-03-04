@@ -25,9 +25,9 @@ package com.invirgance.virge.sql.drivers;
 import com.invirgance.convirgance.ConvirganceException;
 import com.invirgance.convirgance.json.JSONObject;
 import com.invirgance.virge.jdbc.JDBCDrivers;
-import static com.invirgance.virge.sql.DriverTools.COMMAND_DESCRIPTION_SPACING;
-import static com.invirgance.virge.sql.DriverTools.COMMAND_SPACING;
 import static com.invirgance.virge.sql.DriverTools.printToolOptions;
+import static com.invirgance.virge.sql.VirgeSQL.HELP_DESCRIPTION_SPACING;
+import static com.invirgance.virge.sql.VirgeSQL.HELP_SPACING;
 import com.invirgance.virge.tool.Tool;
 
 /**
@@ -49,9 +49,9 @@ public class DriverUnregister implements Tool
     {
         return new String[]
         {
-            COMMAND_SPACING + "--driver <driver>",
-            COMMAND_SPACING + "-d <driver>",
-            COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING + "The name of the driver "
+            HELP_SPACING + "--driver <driver>",
+            HELP_SPACING + "-d <driver>",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "The name of the driver "
         };
     }
     

@@ -22,6 +22,7 @@ SOFTWARE.
 
 package com.invirgance.virge.sql;
 
+import static com.invirgance.virge.sql.VirgeSQL.HELP_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.SELECTED;
 import static com.invirgance.virge.sql.VirgeSQL.print;
 import com.invirgance.virge.sql.drivers.DriverList;
@@ -35,8 +36,7 @@ import java.util.ArrayList;
  */
 public class DriverTools implements Tool
 {
-    public static final String COMMAND_SPACING = "    ";
-    public static final String COMMAND_DESCRIPTION_SPACING = "   ";
+    
     private static final Tool[] TOOLS = new Tool[]{
         new DriverList(),
         new DriverRegister(),
@@ -55,8 +55,6 @@ public class DriverTools implements Tool
     {
         return "drivers";
     }
-    
-
     
     public static void printToolOptions(Tool selected)
     {
@@ -81,7 +79,7 @@ public class DriverTools implements Tool
         
         for(Tool tool : TOOLS)
         {
-            help.add(COMMAND_SPACING + tool.getName() + " - " + tool.getShortDescription());
+            help.add(HELP_SPACING + tool.getName() + " - " + tool.getShortDescription());
         }
         
         return help.toArray(new String[0]);

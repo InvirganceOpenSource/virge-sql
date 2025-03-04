@@ -25,9 +25,9 @@ package com.invirgance.virge.sql.drivers;
 import com.invirgance.convirgance.json.JSONArray;
 import com.invirgance.convirgance.json.JSONObject;
 import com.invirgance.virge.jdbc.JDBCDrivers;
-import static com.invirgance.virge.sql.DriverTools.COMMAND_DESCRIPTION_SPACING;
-import static com.invirgance.virge.sql.DriverTools.COMMAND_SPACING;
 import static com.invirgance.virge.sql.DriverTools.printToolOptions;
+import static com.invirgance.virge.sql.VirgeSQL.HELP_DESCRIPTION_SPACING;
+import static com.invirgance.virge.sql.VirgeSQL.HELP_SPACING;
 import com.invirgance.virge.tool.Tool;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,31 +57,31 @@ public class DriverRegister implements Tool
     {
         return new String[]
         {
-            COMMAND_SPACING + "--name <name>",
-            COMMAND_SPACING + "-n <name>",
-            COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING + "Set the name of the driver. If the name matches an existing",
-            COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING + "driver, the existing driver will be updated.",
-            COMMAND_SPACING + "",
-            COMMAND_SPACING + "--artifact <groupId:artifactId:version>",
-            COMMAND_SPACING + "-a <groupId:artifactId:version>",
-            COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING + "The Maven coordinates of the JDBC driver. This option can be",
-            COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING + "specified more than once if multiple JARs are needed.",
+            HELP_SPACING + "--name <name>",
+            HELP_SPACING + "-n <name>",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "Set the name of the driver. If the name matches an existing",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "driver, the existing driver will be updated.",
+            HELP_SPACING + "",
+            HELP_SPACING + "--artifact <groupId:artifactId:version>",
+            HELP_SPACING + "-a <groupId:artifactId:version>",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "The Maven coordinates of the JDBC driver. This option can be",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "specified more than once if multiple JARs are needed.",
             "",
-            COMMAND_SPACING + "--driver <className>",
-            COMMAND_SPACING + "-d <className>",
-            COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING + "The class name of the JDBC Driver implementation.",
+            HELP_SPACING + "--driver <className>",
+            HELP_SPACING + "-d <className>",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "The class name of the JDBC Driver implementation.",
             "",
-            COMMAND_SPACING + "--data-source <className>",
-            COMMAND_SPACING + "-D <className>",
-            COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING + "The class name of the JDBC DataSource implementation. If",
-            COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING + "not specified, a default Data Source wrapping the Driver",
-            COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING + "will be used.",
+            HELP_SPACING + "--data-source <className>",
+            HELP_SPACING + "-D <className>",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "The class name of the JDBC DataSource implementation. If",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "not specified, a default Data Source wrapping the Driver",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "will be used.",
             "",
-            COMMAND_SPACING + "--prefix <url prefix>",
-            COMMAND_SPACING + "-p <url prefix>",
-            COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING + "The url prefix used by this driver. e.g. jdbc:oracle:",
-            COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING + "This option can be specified more than once if multiple",
-            COMMAND_SPACING + COMMAND_DESCRIPTION_SPACING + "prefixes are supported.",
+            HELP_SPACING + "--prefix <url prefix>",
+            HELP_SPACING + "-p <url prefix>",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "The url prefix used by this driver. e.g. jdbc:oracle:",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "This option can be specified more than once if multiple",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "prefixes are supported.",
             ""
         };
     }

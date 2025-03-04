@@ -22,7 +22,6 @@ SOFTWARE.
 
 package com.invirgance.virge.sql;
 
-import static com.invirgance.virge.sql.DriverTools.COMMAND_SPACING;
 import com.invirgance.virge.tool.Tool;
 import java.io.PrintStream;
 import java.util.HashMap;
@@ -35,6 +34,9 @@ import java.util.Map;
  */
 public class VirgeSQL 
 {
+    public static final String HELP_SPACING = "    ";
+    public static final String HELP_DESCRIPTION_SPACING = "   ";
+    
     private static final String HELP = "Tools for interating with SQL Databases (currently only supports Driver registration/unregistration).";
     
     public static Tool SELECTED;
@@ -60,48 +62,53 @@ public class VirgeSQL
         out.println();
     }
     
-    public static void printHelp(Tool selected)
+    public static void printToolHelp(Tool selected)
     {
+        // TODO look at adding sub tools to Tool
+        Boolean level = SELECTED != null && selected != null && !SELECTED.getName().equals(selected.getName()) || SELECTED != null && selected == null;
         
+        String top = level ? SELECTED.getName() + " " : "";
+        String sub = selected != null ? selected.getName() : "";
+       
         System.out.println();
-        System.out.println("Usage: virge.jar sql " + SELECTED.getName());
-        System.out.println();
-        System.out.println(selected.getShortDescription());
-        System.out.println();
-        System.out.println("Commands:");
-        System.out.println();
-        
-        print(selected.getHelp(), System.out);
-        
-        System.exit(1);
-    }
-    
-    public static void printModuleHelp()
-    {
-        String command = SELECTED != null ? SELECTED.getName() + " " : "";
-        
-        System.out.println();
-        System.out.println("Usage: virge.jar sql " + command);
-        System.out.println();
-        System.out.println(HELP);
-        System.out.println();
-        System.out.println("Commands:");
+        System.out.println("Usage: virge.jar sql " + top + sub);
         System.out.println();
         
-        if(SELECTED != null)
+        if(selected != null)
         {
-            print(SELECTED.getHelp(), System.out);
+            System.out.println(selected.getShortDescription());
+            System.out.println();
+            System.out.println("Options:");
         }
         else
         {
-            for(Tool help : tools)
-            {
-                System.out.println(COMMAND_SPACING + help.getName() + " - " + help.getShortDescription());
-            }
-            
+            System.out.println(HELP);
             System.out.println();
+            System.out.println("Commands:");
         }
-              
+        
+        System.out.println();
+        
+        if(selected != null)
+        {
+            print(selected.getHelp(), System.out);
+        }
+        else
+        {   
+            if(SELECTED != null)
+            {
+                print(SELECTED.getHelp(), System.out);
+            }
+            else
+            {
+                for(Tool help : tools)
+                {
+                    System.out.println(HELP_SPACING + help.getName() + " - " + help.getShortDescription());
+                }  
+                System.out.println();
+            }
+        }
+    
         System.exit(1);
     }
     
@@ -110,7 +117,7 @@ public class VirgeSQL
         // NOTE: -? might be a special pattern in some shells, zsh?
         if(args.length == 0 || args[0].equals("--help") || args[0].equals("-h") || args[0].equals("-?"))
         {   
-            printModuleHelp();
+            printToolHelp(null);
          
             return;
         }
@@ -121,10 +128,10 @@ public class VirgeSQL
         {
             System.err.println("\nUnknown Command: " + args[0]);
             
-            printModuleHelp();
+             printToolHelp(null);
         }
         
-        if(!SELECTED.parse(args, 1)) printHelp(SELECTED);
+        if(!SELECTED.parse(args, 1)) printToolHelp(null);
         
         SELECTED.execute();
     }
