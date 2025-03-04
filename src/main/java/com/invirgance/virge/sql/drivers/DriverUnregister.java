@@ -118,7 +118,7 @@ public class DriverUnregister implements Tool
         
         if(descriptor == null)
         {
-            System.err.println("Driver '" + driver + "' not found!");
+            System.err.print("Driver '" + driver + "' not found!");
             System.exit(1);
         }
         

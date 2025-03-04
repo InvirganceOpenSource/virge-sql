@@ -87,7 +87,7 @@ public class DriverTools implements Tool
                 {                    
                     if(args.length != start+1)
                     {
-                        System.out.println("\n\u001B[33mUnknown parameter:\u001B[0m " + args[start + 1]);
+                        System.out.println("\nUnknown parameter: " + args[start + 1]);
                     }
                     
                     printHelp(this.tool);
@@ -104,7 +104,7 @@ public class DriverTools implements Tool
         
         if(start < args.length)
         {
-            System.out.println("\n\u001B[33mUnknown command:\u001B[0m " + args[start]);
+            System.out.println("\nUnknown command: " + args[start]);
         }
         
         return false;
