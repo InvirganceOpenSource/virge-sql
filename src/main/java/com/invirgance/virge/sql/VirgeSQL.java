@@ -90,6 +90,7 @@ public class VirgeSQL
             {
                System.out.println(HELP);
             }
+            
             System.out.println();
             System.out.println("Commands:");
         }
@@ -112,6 +113,7 @@ public class VirgeSQL
                 {
                     System.out.println(HELP_SPACING + help.getName() + " - " + help.getShortDescription());
                 }  
+                
                 System.out.println();
             }
         }
