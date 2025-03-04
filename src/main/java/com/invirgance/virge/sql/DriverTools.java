@@ -104,7 +104,7 @@ public class DriverTools implements Tool
         
         if(start < args.length)
         {
-            System.out.println("\nUnknown command: " + args[start]);
+            System.err.println("\nUnknown command: " + args[start]);
         }
         
         return false;
