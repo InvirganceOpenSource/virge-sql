@@ -87,7 +87,7 @@ public class DriverTools implements Tool
                 {                    
                     if(args.length != start+1)
                     {
-                        System.out.println("\nUnknown parameter: " + args[start + 1]);
+                        System.err.println("\nUnknown parameter: " + args[start + 1]);
                     }
                     
                     printHelp(this.tool);
