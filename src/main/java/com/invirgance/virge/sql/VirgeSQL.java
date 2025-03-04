@@ -81,8 +81,15 @@ public class VirgeSQL
             System.out.println("Options:");
         }
         else
-        {
-            System.out.println(HELP);
+        {   
+            if(SELECTED != null)
+            {
+                System.out.println(SELECTED.getShortDescription());
+            }
+            else
+            {
+               System.out.println(HELP);
+            }
             System.out.println();
             System.out.println("Commands:");
         }
