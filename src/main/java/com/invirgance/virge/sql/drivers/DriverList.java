@@ -84,7 +84,12 @@ public class DriverList implements Tool
         
         return true;
     }
-
+    
+    public String getExample()
+    {
+        return "virge.jar sql driver list -n <driver_name>";
+    }
+    
     @Override
     public void execute() throws Exception
     {

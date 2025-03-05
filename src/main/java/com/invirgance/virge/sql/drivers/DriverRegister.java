@@ -179,24 +179,28 @@ public class DriverRegister implements Tool
         if(descriptor.get("name") == null || descriptor.getString("name").length() < 1)
         {
             System.err.println("Unique name is required!");
+            System.out.println("Hint: use -n to specify a simple name to use when working with the driver.");
             System.exit(1);
         }
         
         if(descriptor.get("driver") == null || descriptor.getString("driver").length() < 1)
         {
             System.err.println("Driver class is required!");
+            System.out.println("Hint: use -d to specify the driver class, double check that the 'd' is lowercase.");
             System.exit(1);
         }
         
         if(descriptor.getJSONArray("artifact").size() < 1)
         {
             System.err.println("Maven artifact is required!");
+            System.out.println("Hint: use -a to specify the artifact.");
             System.exit(1);
         }
         
         if(descriptor.getJSONArray("prefixes").size() < 1)
         {
             System.err.println("JDBC URL prefix is required to identify driver URLs!");
+            System.out.println("Hint: use -p to specify the prefix.");
             System.exit(1);
         }
         
@@ -205,7 +209,12 @@ public class DriverRegister implements Tool
         System.err.println("Registered: " + driver);
         System.out.println(descriptor.toString(4));
     }
-    
+     
+    public String getExample()
+    {
+        return "virge.jar sql drivers register -n \"simple_name\" -p \"url:prefix\" -a \"org.example.command:faketools:123.1.11.0\" -d \"org.example.command.jdbc.ClientDriver\"";
+    }
+       
     private void add(JSONArray<String> array, List<String> addition)
     {
         for(String item : addition)
