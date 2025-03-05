@@ -51,7 +51,7 @@ public class DriverUnregister implements Tool
         {
             HELP_SPACING + "--name <driver>",
             HELP_SPACING + "-n <driver>",
-            HELP_SPACING + HELP_DESCRIPTION_SPACING + "The name of the driver to unregister. Use the 'list' command to view the names of all drivers."
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "The name of the driver to unregister."
         };
     }
     
@@ -113,7 +113,8 @@ public class DriverUnregister implements Tool
         
         if(descriptor == null)
         {
-            System.err.print("Driver '" + driver + "' not found!");
+            System.err.println("Driver '" + driver + "' not found!");
+            System.out.println("Hint: Use the 'list' command to view the name of each driver.");
             System.exit(1);
         }
         
