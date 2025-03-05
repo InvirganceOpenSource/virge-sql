@@ -62,6 +62,16 @@ public class VirgeSQL
         out.println();
     }
     
+    /**
+     * Prints out the help for:
+     * - Top level commands
+     * - Sub level command options
+     * - When no command is provided
+     * 
+     * If this module is called without any tool, than the help for this specific module is printed
+     * 
+     * @param selected the selected sub command or null for top level commands
+     */
     public static void printToolHelp(Tool selected)
     {
         // TODO look at adding sub tools to Tool
@@ -74,6 +84,7 @@ public class VirgeSQL
         System.out.println("Usage: virge.jar sql " + top + sub);
         System.out.println();
         
+        // Commands without sub commands
         if(selected != null)
         {
             System.out.println(selected.getShortDescription());
@@ -85,6 +96,7 @@ public class VirgeSQL
         }
         else if(SELECTED != null)
         {
+            // Top level commands
             System.out.println(SELECTED.getShortDescription());
             System.out.println();
             System.out.println("Commands: Passing '-h' to a command will display all options.");
@@ -94,6 +106,7 @@ public class VirgeSQL
         }
         else
         {
+            // No command
             System.out.println(HELP);
             System.out.println();
             System.out.println("Commands:");
@@ -110,6 +123,12 @@ public class VirgeSQL
         System.exit(1);
     }
     
+    /**
+     * Runs the tool, the top level should be trimmed by this point (virge.jar sql drivers) where sql is trimmed.
+     * 
+     * @param args The command and options to execute.
+     * @throws Exception Exceptions raised by tools. 
+     */
     public static void main(String[] args) throws Exception
     {
         // NOTE: -? might be a special pattern in some shells, zsh?

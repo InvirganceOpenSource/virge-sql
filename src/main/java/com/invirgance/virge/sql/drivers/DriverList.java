@@ -31,7 +31,8 @@ import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
 import com.invirgance.virge.tool.Tool;
 
 /**
- *
+ * Lists the registered database drivers.
+ * 
  * @author tadghh
  */
 public class DriverList implements Tool
@@ -52,8 +53,7 @@ public class DriverList implements Tool
            HELP_SPACING + HELP_DESCRIPTION_SPACING  + "Provides a brief overview of the current drivers.",
            HELP_SPACING + "--name <driverName>",
            HELP_SPACING + "-n <driverName>",
-           HELP_SPACING + HELP_DESCRIPTION_SPACING  + "View detailed information about a driver.",
-           
+           HELP_SPACING + HELP_DESCRIPTION_SPACING  + "View detailed information about a driver.",         
         };
     }
     
@@ -88,6 +88,7 @@ public class DriverList implements Tool
         return true;
     }
     
+    @Override
     public String getExample()
     {
         return "virge.jar sql drivers list -n <driverName>";
@@ -100,6 +101,17 @@ public class DriverList implements Tool
         else printAll();
     }
     
+    /**
+     * Prints out detailed information about the driver.
+     * This includes: 
+     * - Driver
+     * - DataSource
+     * - URL prefix
+     * - Keys
+     * - Examples
+     * 
+     * @param driver The drivers name.
+     */
     public void printDriver(String driver)
     {
         JDBCDrivers drivers = new JDBCDrivers();
@@ -114,6 +126,9 @@ public class DriverList implements Tool
         System.out.println(selected.toString(4));
     }
     
+    /**
+     * Prints out high level information for the registered drivers.
+     */
     public void printAll()
     {
         JDBCDrivers drivers = new JDBCDrivers();

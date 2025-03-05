@@ -33,7 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * Registers a driver allowing Virge to communicate with the Database.
+ * 
  * @author tadghh
  */
 public class DriverRegister implements Tool
@@ -145,7 +146,16 @@ public class DriverRegister implements Tool
     {
         registerDriver();    
     }
+   
+    @Override
+    public String getExample()
+    {
+        return "virge.jar sql drivers register -n <driverName> -p <url:prefix> -a <artifact:ID> -d <org.example.jdbc.ClientDriver>";
+    }
     
+    /**
+     * Registers the driver, if a driver with an equal name already exists its information will be replaced.
+     */
     public void registerDriver()
     {
         JDBCDrivers drivers = new JDBCDrivers();
@@ -209,17 +219,9 @@ public class DriverRegister implements Tool
         System.err.println("Registered: " + descriptor.get("driver"));
         System.out.println(descriptor.toString(4));
     }
-     
-    public String getExample()
-    {
-        return "virge.jar sql drivers register -n <driverName> -p <url:prefix> -a <artifact:ID> -d <org.example.jdbc.ClientDriver>";
-    }
        
     private void add(JSONArray<String> array, List<String> addition)
     {
-        for(String item : addition)
-        {
-            if(!array.contains(item)) array.add(item);
-        }
+        for(String item : addition) if(!array.contains(item)) array.add(item);
     }
 }

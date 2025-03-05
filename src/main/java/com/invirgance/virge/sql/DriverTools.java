@@ -30,8 +30,10 @@ import com.invirgance.virge.sql.drivers.DriverRegister;
 import com.invirgance.virge.sql.drivers.DriverUnregister;
 import com.invirgance.virge.tool.Tool;
 import java.util.ArrayList;
+
 /**
- *
+ * Contains the sub commands for registering/unregistering drivers SQL Databases.
+ * 
  * @author tadghh
  */
 public class DriverTools implements Tool
@@ -44,11 +46,6 @@ public class DriverTools implements Tool
     };
      
     private Tool tool;
-    
-    public Tool[] getTools()
-    {
-        return TOOLS;
-    }
     
     @Override
     public String getName()
@@ -111,5 +108,13 @@ public class DriverTools implements Tool
     {
         tool.execute();
     }
-    
+        
+    /**
+     * Gets the tools of this tool (sub-commands).
+     * @return The tools (sub-commands).
+     */
+    public Tool[] getTools()
+    {
+        return TOOLS;
+    }
 }

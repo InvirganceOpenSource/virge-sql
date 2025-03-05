@@ -31,7 +31,9 @@ import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
 import com.invirgance.virge.tool.Tool;
 
 /**
- *
+ * Removes a driver, Virge will no longer be able to use this to communicate with Databases.
+ * Consider using this if you need to override one of the default drivers.
+ * 
  * @author tadghh
  */
 public class DriverUnregister implements Tool
@@ -96,11 +98,23 @@ public class DriverUnregister implements Tool
         else unregisterDriver(driver);
     }
     
+    @Override
     public String getExample()
     {
         return "virge.jar sql drivers unregister -n <driverName>";
     }
     
+    /**
+     * Prints out detailed information about the driver after it has been removed.
+     * This includes: 
+     * - Driver
+     * - DataSource
+     * - URL prefix
+     * - Keys
+     * - Examples
+     * 
+     * @param driver The drivers name.
+     */
     public void printDriver(String driver)
     {
         JDBCDrivers drivers = new JDBCDrivers();
@@ -111,6 +125,11 @@ public class DriverUnregister implements Tool
         System.out.println(selected.toString(4));
     }
     
+    /**
+     * Removes the driver, Virge will no longer be able to use this.
+     * 
+     * @param driver The drivers name.
+     */
     public void unregisterDriver(String driver)
     {
         JDBCDrivers drivers = new JDBCDrivers();
