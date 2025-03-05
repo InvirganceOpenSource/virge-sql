@@ -57,8 +57,8 @@ public class DriverRegister implements Tool
     {
         return new String[]
         {
-            HELP_SPACING + "--name <name>",
-            HELP_SPACING + "-n <name>",
+            HELP_SPACING + "--name <driverName>",
+            HELP_SPACING + "-n <driverName>",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "Set the name of the driver. If the name matches an existing",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "driver, the existing driver will be updated.",
             HELP_SPACING + "",

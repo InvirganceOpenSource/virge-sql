@@ -37,7 +37,7 @@ public class VirgeSQL
     public static final String HELP_SPACING = "    ";
     public static final String HELP_DESCRIPTION_SPACING = "   ";
     
-    private static final String HELP = "Tools for interating with SQL Databases (currently only supports Driver registration/unregistration).";
+    private static final String HELP = "Tools for interacting with SQL Databases.";
     
     public static Tool SELECTED;
     
@@ -51,7 +51,7 @@ public class VirgeSQL
         for(Tool tool : tools) lookup.put(tool.getName(), tool);
     }
     
-    public static void print(String[] lines, PrintStream out)
+    private static void print(String[] lines, PrintStream out)
     {
         for(String line : lines)
         {
@@ -87,7 +87,7 @@ public class VirgeSQL
         {
             System.out.println(SELECTED.getShortDescription());
             System.out.println();
-            System.out.println("Commands:");
+            System.out.println("Commands: Passing '-h' to a command will display all options.");
             System.out.println();
             
             print(SELECTED.getHelp(), System.out); 

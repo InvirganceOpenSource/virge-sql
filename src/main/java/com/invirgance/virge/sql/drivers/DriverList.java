@@ -50,8 +50,8 @@ public class DriverList implements Tool
         return new String[]{
            HELP_SPACING + "*default",
            HELP_SPACING + HELP_DESCRIPTION_SPACING  + "Provides a brief overview of the current drivers.",
-           HELP_SPACING + "--name <driver>",
-           HELP_SPACING + "-n <driver>",
+           HELP_SPACING + "--name <driverName>",
+           HELP_SPACING + "-n <driverName>",
            HELP_SPACING + HELP_DESCRIPTION_SPACING  + "View detailed information about a driver.",
            
         };
@@ -90,7 +90,7 @@ public class DriverList implements Tool
     
     public String getExample()
     {
-        return "virge.jar sql drivers list -n <driver_name>";
+        return "virge.jar sql drivers list -n <driverName>";
     }
     
     @Override

@@ -49,8 +49,8 @@ public class DriverUnregister implements Tool
     {
         return new String[]
         {
-            HELP_SPACING + "--name <driver>",
-            HELP_SPACING + "-n <driver>",
+            HELP_SPACING + "--name <driverName>",
+            HELP_SPACING + "-n <driverName>",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "The name of the driver to unregister."
         };
     }
@@ -98,7 +98,7 @@ public class DriverUnregister implements Tool
     
     public String getExample()
     {
-        return "virge.jar sql drivers unregister -n <simple_name>";
+        return "virge.jar sql drivers unregister -n <driverName>";
     }
     
     public void printDriver(String driver)
