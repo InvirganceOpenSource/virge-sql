@@ -131,7 +131,7 @@ public class DriverList implements Tool
             if(widths[1] < example.length()) widths[1] = example.length();
         }
         
-        System.out.print(formatWidth("Database Name", widths[0]));
+        System.out.print(formatWidth("Driver Name", widths[0]));
         System.out.print("  ");
         System.out.println(formatWidth("Connection String Example", widths[1]));
         
