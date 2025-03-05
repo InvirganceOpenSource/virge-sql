@@ -206,7 +206,7 @@ public class DriverRegister implements Tool
         
         drivers.addDescriptor(descriptor);
         
-        System.err.println("Registered: " + driver);
+        System.err.println("Registered: " + descriptor.get("driver"));
         System.out.println(descriptor.toString(4));
     }
      
