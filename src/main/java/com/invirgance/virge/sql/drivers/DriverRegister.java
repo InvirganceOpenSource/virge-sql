@@ -163,6 +163,10 @@ public class DriverRegister implements Tool
             descriptor.put("prefixes", new JSONArray());
             descriptor.put("examples", new JSONArray());
         }
+        else
+        {
+            System.out.println("Updated existing driver: " + name);
+        }
         
         descriptor.put("name", name);
         
