@@ -158,7 +158,6 @@ public class DriverRegister implements Tool
             descriptor.put("name", name);
             descriptor.put("artifact", new JSONArray());
             descriptor.put("driver", "");
-            // TODO maybe a problem? Do we need to shrinkwrap back over to virge?
             descriptor.put("datasource", "com.invirgance.virge.jdbc.DriverDataSource");
             descriptor.put("prefixes", new JSONArray());
             descriptor.put("examples", new JSONArray());

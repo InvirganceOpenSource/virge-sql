@@ -49,9 +49,9 @@ public class DriverUnregister implements Tool
     {
         return new String[]
         {
-            HELP_SPACING + "--driver <driver>",
-            HELP_SPACING + "-d <driver>",
-            HELP_SPACING + HELP_DESCRIPTION_SPACING + "The name of the driver "
+            HELP_SPACING + "--name <driver>",
+            HELP_SPACING + "-n <driver>",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "The name of the driver to unregister. Use the 'list' command to view the names of all drivers."
         };
     }
     
@@ -71,8 +71,8 @@ public class DriverUnregister implements Tool
         {
             switch(args[i])
             {
-                case "--driver":
-                case "-d":
+                case "--name":
+                case "-n":
                     this.driver = args[++i];
                     break;
                 
