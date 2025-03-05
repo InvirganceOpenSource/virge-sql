@@ -48,9 +48,12 @@ public class DriverList implements Tool
     public String[] getHelp()
     {
         return new String[]{
+           HELP_SPACING + "*default",
+           HELP_SPACING + HELP_DESCRIPTION_SPACING  + "Provides a brief overview of the current drivers.",
            HELP_SPACING + "--name <driver>",
            HELP_SPACING + "-n <driver>",
-           HELP_SPACING + HELP_DESCRIPTION_SPACING  + "View more information about this driver.",
+           HELP_SPACING + HELP_DESCRIPTION_SPACING  + "View detailed information about a driver.",
+           
         };
     }
     
@@ -87,7 +90,7 @@ public class DriverList implements Tool
     
     public String getExample()
     {
-        return "virge.jar sql driver list -n <driver_name>";
+        return "virge.jar sql drivers list -n <driver_name>";
     }
     
     @Override
@@ -102,9 +105,11 @@ public class DriverList implements Tool
         JDBCDrivers drivers = new JDBCDrivers();
         JSONObject selected = drivers.getDescriptor(driver);
         
-        System.err.println("Unknown driver: " + driver);
-        
-        if(selected == null) throw new ConvirganceException("Unknown driver: " + driver);
+        if(selected == null) 
+        {
+            System.err.println("Unknown driver: " + driver);
+            throw new ConvirganceException("Unknown driver: " + driver);
+        }
         
         System.out.println(selected.toString(4));
     }

@@ -212,7 +212,7 @@ public class DriverRegister implements Tool
      
     public String getExample()
     {
-        return "virge.jar sql drivers register -n \"simple_name\" -p \"url:prefix\" -a \"org.example.command:faketools:123.1.11.0\" -d \"org.example.command.jdbc.ClientDriver\"";
+        return "virge.jar sql drivers register -n <simpleName> -p <url:prefix> -a <arti.fact.id:faketools:version> -d <org.example.jdbc.ClientDriver>";
     }
        
     private void add(JSONArray<String> array, List<String> addition)

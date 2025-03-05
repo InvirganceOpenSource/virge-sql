@@ -96,6 +96,11 @@ public class DriverUnregister implements Tool
         else unregisterDriver(driver);
     }
     
+    public String getExample()
+    {
+        return "virge.jar sql drivers unregister -n <simple_name>";
+    }
+    
     public void printDriver(String driver)
     {
         JDBCDrivers drivers = new JDBCDrivers();
