@@ -48,9 +48,9 @@ public class DriverList implements Tool
     public String[] getHelp()
     {
         return new String[]{
-           HELP_SPACING + "--driver <driver>",
-           HELP_SPACING + "-d <driver>",
-           HELP_SPACING + HELP_DESCRIPTION_SPACING  + "The name of the driver",
+           HELP_SPACING + "--name <driver>",
+           HELP_SPACING + "-n <driver>",
+           HELP_SPACING + HELP_DESCRIPTION_SPACING  + "View more information about this driver.",
         };
     }
     
@@ -67,8 +67,8 @@ public class DriverList implements Tool
         {
             switch(args[i])
             {
-                case "--driver":
-                case "-d":
+                case "--name":
+                case "-n":
                     this.driver = args[++i];
                     break;
                     
@@ -96,6 +96,8 @@ public class DriverList implements Tool
     {
         JDBCDrivers drivers = new JDBCDrivers();
         JSONObject selected = drivers.getDescriptor(driver);
+        
+        System.err.println("Unknown driver: " + driver);
         
         if(selected == null) throw new ConvirganceException("Unknown driver: " + driver);
         
