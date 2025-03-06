@@ -22,7 +22,6 @@ SOFTWARE.
 
 package com.invirgance.virge.sql;
 
-import static com.invirgance.virge.sql.VirgeSQL.HELP_DESCRIPTION_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.HELP_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
 import com.invirgance.virge.sql.drivers.DriverList;
@@ -61,7 +60,7 @@ public class DriverTools implements Tool
         
         for(Tool tool : TOOLS)
         {
-            help.add(HELP_SPACING + tool.getName() + " - " + tool.getShortDescription() + "\n" + HELP_SPACING + HELP_DESCRIPTION_SPACING + tool.getExample() + "\n");
+            help.add(HELP_SPACING + tool.getName() + " - " + tool.getShortDescription());
         }
         
         return help.toArray(new String[0]);

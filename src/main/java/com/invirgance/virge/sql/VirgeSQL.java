@@ -60,7 +60,6 @@ public class VirgeSQL
         }
         
         out.println();
-        out.println();
     }
     
     /**
@@ -124,6 +123,28 @@ public class VirgeSQL
         System.exit(1);
     }
     
+    public static void printAllBriefHelp()
+    {
+        // Note: this command is like a man page.
+        System.out.println();
+        System.out.println("Usage: virge.jar sql <module> <command>");
+        System.out.println();
+        System.out.println("The following modules are available");
+        System.out.println();
+        System.out.println("Modules:");
+        System.out.println();
+        
+        for(Tool tool : tools)
+        {
+            System.out.println(" " + tool.getName() + " - " + tool.getShortDescription());
+            System.out.println("   Commands:");
+            
+            print(tool.getHelp(), System.out);
+        }
+        
+        System.exit(1);
+    }
+    
     /**
      * Runs the tool, the top level should be trimmed by this point (virge.jar sql drivers) where sql is trimmed.
      * 
@@ -136,6 +157,13 @@ public class VirgeSQL
         if(args.length == 0 || args[0].equals("--help") || args[0].equals("-h") || args[0].equals("-?"))
         {   
             printToolHelp(null);
+         
+            return;
+        }
+        
+        if(args[0].equals("--all"))
+        {   
+            printAllBriefHelp();
          
             return;
         }
