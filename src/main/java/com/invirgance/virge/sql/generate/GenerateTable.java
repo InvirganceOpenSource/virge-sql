@@ -34,6 +34,7 @@ import com.invirgance.convirgance.source.Source;
 import com.invirgance.convirgance.transform.CoerceStringsTransformer;
 import com.invirgance.virge.Virge;
 import static com.invirgance.virge.Virge.exit;
+import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
 import com.invirgance.virge.tool.Tool;
 import java.io.File;
 import java.io.IOException;
@@ -131,7 +132,7 @@ public class GenerateTable implements Tool
             
             if(tableName.contains(".")) tableName = tableName.substring(0, tableName.indexOf('.'));      
         }
-
+        
         return new FileSource(file);
     }
     
@@ -161,7 +162,7 @@ public class GenerateTable implements Tool
     @Override 
     public String getShortDescription()
     {
-        return "Generate a SQL query that creates a table based on the input files data.";
+        return "Generate a SQL query to create a table based on the source's data.";
     }
     
     @Override
@@ -174,9 +175,6 @@ public class GenerateTable implements Tool
     public String[] getHelp()
     {
         return new String[] {
-            "table <source>",
-            "    Generates a SQL script to create a table based on a source data file",
-            "",
             "    --source-type <format>",
             "    -i <format>",
             "        Specify the format of the input file. Currently supported options are json, csv, tsv, pipe, delimited, and jbin",
@@ -191,7 +189,7 @@ public class GenerateTable implements Tool
             "",
             "    --name <table name>",
             "    -n <table name>",
-            "         Specify the name for the generated table, otherwise it will be based on the file name"
+            "         Specify the name for the generated table. Otherwise the name will be created from the 'source'"
         };
     }
 
@@ -252,7 +250,8 @@ public class GenerateTable implements Tool
                 case "--help":
                 case "-h":
                 case "-?":
-                    return false;
+                    printToolHelp(this);
+                    return true;
                 
                 case "--source-delimiter":
                 case "-S":
@@ -301,6 +300,7 @@ public class GenerateTable implements Tool
             }
         }
         
+        if(tableName == null) return error("No table name specified! Use -n to specify a name.");
         if(source == null) return error("No source specified!");
         if(input == null) return error("No input type specified and unable to autodetect");
         
@@ -323,6 +323,7 @@ public class GenerateTable implements Tool
         int index;
         
         
+        if(tableName == null) Virge.exit(254, "No table name specified! Use -n to specify a name.");
         if(source == null) Virge.exit(254, "No source specified!");
         if(input == null) Virge.exit(254, "No input type specified and unable to autodetect");
         

@@ -58,8 +58,8 @@ public class DriverRegister implements Tool
     {
         return new String[]
         {
-            HELP_SPACING + "--name <driverName>",
-            HELP_SPACING + "-n <driverName>",
+            HELP_SPACING + "--name <driver name>",
+            HELP_SPACING + "-n <driver name>",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "Set the name of the driver. If the name matches an existing",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "driver, the existing driver will be updated.",
             HELP_SPACING + "",
@@ -68,12 +68,12 @@ public class DriverRegister implements Tool
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "The Maven coordinates of the JDBC driver. This option can be",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "specified more than once if multiple JARs are needed.",
             "",
-            HELP_SPACING + "--driver <className>",
-            HELP_SPACING + "-d <className>",
+            HELP_SPACING + "--driver <class name>",
+            HELP_SPACING + "-d <class name>",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "The class name of the JDBC Driver implementation.",
             "",
-            HELP_SPACING + "--data-source <className>",
-            HELP_SPACING + "-D <className>",
+            HELP_SPACING + "--data-source <class name>",
+            HELP_SPACING + "-D <class name>",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "The class name of the JDBC DataSource implementation. If",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "not specified, a default Data Source wrapping the Driver",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "will be used.",
@@ -83,10 +83,6 @@ public class DriverRegister implements Tool
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "The url prefix used by this driver. e.g. jdbc:oracle:",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "This option can be specified more than once if multiple",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "prefixes are supported.",
-            "",           
-            HELP_SPACING + "--help",
-            HELP_SPACING + "-h",
-            HELP_SPACING + HELP_DESCRIPTION_SPACING  + "Display this menu.",     
         };
     }
     

@@ -51,8 +51,8 @@ public class DriverUnregister implements Tool
     {
         return new String[]
         {
-            HELP_SPACING + "--name <driverName>",
-            HELP_SPACING + "-n <driverName>",
+            HELP_SPACING + "--name <driver name>",
+            HELP_SPACING + "-n <driver name>",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "The name of the driver to unregister.",
             "",           
             HELP_SPACING + "--help",
