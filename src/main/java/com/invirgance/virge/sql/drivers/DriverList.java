@@ -54,6 +54,9 @@ public class DriverList implements Tool
            HELP_SPACING + "--name <driverName>",
            HELP_SPACING + "-n <driverName>",
            HELP_SPACING + HELP_DESCRIPTION_SPACING  + "View detailed information about a driver.",         
+           HELP_SPACING + "--help",
+           HELP_SPACING + "-h",
+           HELP_SPACING + HELP_DESCRIPTION_SPACING  + "Display this menu.",         
         };
     }
     

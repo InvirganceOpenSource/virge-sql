@@ -83,7 +83,10 @@ public class DriverRegister implements Tool
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "The url prefix used by this driver. e.g. jdbc:oracle:",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "This option can be specified more than once if multiple",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "prefixes are supported.",
-            ""
+            "",           
+            HELP_SPACING + "--help",
+            HELP_SPACING + "-h",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING  + "Display this menu.",     
         };
     }
     

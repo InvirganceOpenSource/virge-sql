@@ -53,7 +53,11 @@ public class DriverUnregister implements Tool
         {
             HELP_SPACING + "--name <driverName>",
             HELP_SPACING + "-n <driverName>",
-            HELP_SPACING + HELP_DESCRIPTION_SPACING + "The name of the driver to unregister."
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "The name of the driver to unregister.",
+            "",           
+            HELP_SPACING + "--help",
+            HELP_SPACING + "-h",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING  + "Display this menu.",     
         };
     }
     
