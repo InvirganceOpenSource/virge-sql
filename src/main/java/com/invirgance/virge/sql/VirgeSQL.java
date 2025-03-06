@@ -44,7 +44,8 @@ public class VirgeSQL
     public static final Map<String,Tool> lookup = new HashMap<>();
         
     public static final Tool[] tools = new Tool[] {
-        new DriverTools()
+        new DriverTools(),
+        new GenerationTools()
     }; 
      
     static {
