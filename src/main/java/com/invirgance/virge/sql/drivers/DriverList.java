@@ -94,7 +94,7 @@ public class DriverList implements Tool
     @Override
     public String getExample()
     {
-        return "virge.jar sql drivers list -n <driverName>";
+        return "virge.jar sql drivers list -n <driver name>";
     }
     
     @Override

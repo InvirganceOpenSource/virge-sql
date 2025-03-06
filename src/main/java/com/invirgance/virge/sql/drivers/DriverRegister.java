@@ -50,7 +50,7 @@ public class DriverRegister implements Tool
     @Override
     public String getName()
     {
-        return "register";
+        return "add";
     }
 
     @Override
@@ -89,7 +89,7 @@ public class DriverRegister implements Tool
     @Override 
     public String getShortDescription()
     {
-        return "Register a new database driver for creating connections.";
+        return "Add a new database driver for creating connections.";
     }
     
     @Override
@@ -149,7 +149,7 @@ public class DriverRegister implements Tool
     @Override
     public String getExample()
     {
-        return "virge.jar sql drivers register -n <driverName> -p <url:prefix> -a <artifact:ID> -d <org.example.jdbc.ClientDriver>";
+        return "virge.jar sql drivers add -n <driver name> -p <url:prefix> -a <artifact:ID> -d <org.example.jdbc.ClientDriver>";
     }
     
     /**
@@ -215,7 +215,7 @@ public class DriverRegister implements Tool
         
         drivers.addDescriptor(descriptor);
         
-        System.err.println("Registered: " + descriptor.get("driver"));
+        System.err.println("Added: " + descriptor.get("driver"));
         System.out.println(descriptor.toString(4));
     }
        

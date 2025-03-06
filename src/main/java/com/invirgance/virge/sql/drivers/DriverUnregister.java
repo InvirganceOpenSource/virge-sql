@@ -43,7 +43,7 @@ public class DriverUnregister implements Tool
     @Override
     public String getName()
     {
-        return "unregister";
+        return "remove";
     }
 
     @Override
@@ -53,7 +53,7 @@ public class DriverUnregister implements Tool
         {
             HELP_SPACING + "--name <driver name>",
             HELP_SPACING + "-n <driver name>",
-            HELP_SPACING + HELP_DESCRIPTION_SPACING + "The name of the driver to unregister.",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "The name of the driver to remove.",
             "",           
             HELP_SPACING + "--help",
             HELP_SPACING + "-h",
@@ -64,7 +64,7 @@ public class DriverUnregister implements Tool
     @Override 
     public String getShortDescription()
     {
-        return "Unregister a driver so it can no longer be used to create connections.";
+        return "Remove a driver so it can no longer be used to create connections.";
     }
     
     @Override
@@ -105,7 +105,7 @@ public class DriverUnregister implements Tool
     @Override
     public String getExample()
     {
-        return "virge.jar sql drivers unregister -n <driverName>";
+        return "virge.jar sql drivers remove -n <driver name>";
     }
     
     /**
