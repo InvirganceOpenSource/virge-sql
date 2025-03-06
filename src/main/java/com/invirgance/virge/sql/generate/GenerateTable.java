@@ -168,7 +168,7 @@ public class GenerateTable implements Tool
     @Override
     public String getExample()
     {
-        return "virge.jar sql drivers generate table -s <filePath>";
+        return "virge.jar sql drivers generate table -source <file|url>";
     }    
     
     @Override
@@ -235,6 +235,9 @@ public class GenerateTable implements Tool
     @Override
     public boolean parse(String[] args, int start) throws Exception
     {
+        
+        if(args.length == start) return false;
+        
         for(int i=start; i<args.length; i++)
         {
             // Handle single-letter params with no spaces in them
