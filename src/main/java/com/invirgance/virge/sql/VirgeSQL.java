@@ -45,7 +45,8 @@ public class VirgeSQL
         
     public static final Tool[] tools = new Tool[] {
         new DriverTools(),
-        new GenerationTools()
+        new GenerationTools(),
+        new ImportTools()
     }; 
      
     static {
