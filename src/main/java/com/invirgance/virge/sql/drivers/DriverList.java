@@ -22,8 +22,8 @@ SOFTWARE.
 
 package com.invirgance.virge.sql.drivers;
 
-import com.invirgance.convirgance.ConvirganceException;
 import com.invirgance.convirgance.json.JSONObject;
+import com.invirgance.virge.Virge;
 import com.invirgance.virge.jdbc.JDBCDrivers;
 import static com.invirgance.virge.sql.VirgeSQL.HELP_DESCRIPTION_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.HELP_SPACING;
@@ -50,7 +50,7 @@ public class DriverList implements Tool
     {
         return new String[]{
            HELP_SPACING + "*default",
-           HELP_SPACING + HELP_DESCRIPTION_SPACING  + "Provides a brief overview of the current drivers.",
+           HELP_SPACING + HELP_DESCRIPTION_SPACING  + "Provides a brief overview and connection templates of the current drivers.",
            HELP_SPACING + "--name <driver name>",
            HELP_SPACING + "-n <driver name>",
            HELP_SPACING + HELP_DESCRIPTION_SPACING  + "View detailed information about a driver.",         
@@ -122,8 +122,11 @@ public class DriverList implements Tool
         
         if(selected == null) 
         {
-            System.err.println("Unknown driver: " + driver);
-            throw new ConvirganceException("Unknown driver: " + driver);
+            System.out.println();
+            System.out.println("View the current driver names below:");
+            printAll();
+            System.out.println();
+            Virge.exit(254, "Unknown driver name: " + driver);
         }
         
         System.out.println(selected.toString(4));
