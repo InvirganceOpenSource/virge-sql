@@ -81,13 +81,14 @@ public class VirgeSQL
         String top = level ? SELECTED.getName() + " " : "";
         String sub = selected != null ? selected.getName() : "";
        
-        System.out.println();
-        System.out.println("Usage: virge.jar sql " + top + sub);
-        System.out.println();
+        
         
         // Commands without sub commands
         if(selected != null)
         {
+            System.out.println();
+            System.out.println("Usage: virge.jar sql " + top + sub);
+            System.out.println();
             System.out.println(selected.getShortDescription());
             System.out.println();
             System.out.println("Options:");
@@ -98,9 +99,16 @@ public class VirgeSQL
         else if(SELECTED != null)
         {
             // Top level commands
-            System.out.println(SELECTED.getShortDescription());
             System.out.println();
-            System.out.println("Commands: Passing '-h' to a command will display all options.");
+            System.out.println("Usage: virge.jar sql " + top + sub + "<tool>");
+            System.out.println();
+            System.out.println(SELECTED.getShortDescription());
+            System.out.println();            
+            System.out.println("Options:");
+            System.out.println();
+            System.out.println(HELP_SPACING + "<tool> --help | -h - to view a tools options.");
+            System.out.println();
+            System.out.println("Tools:");
             System.out.println();
             
             print(SELECTED.getHelp(), System.out); 
@@ -108,6 +116,9 @@ public class VirgeSQL
         else
         {
             // No command
+            System.out.println();
+            System.out.println("Usage: virge.jar sql " + top + sub);
+            System.out.println();
             System.out.println(HELP);
             System.out.println();
             System.out.println("Options:");

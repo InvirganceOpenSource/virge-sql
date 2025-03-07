@@ -43,6 +43,8 @@ import com.invirgance.convirgance.transform.CoerceStringsTransformer;
 import com.invirgance.virge.Virge;
 import static com.invirgance.virge.Virge.exit;
 import com.invirgance.virge.jdbc.JDBCDrivers;
+import static com.invirgance.virge.sql.VirgeSQL.HELP_DESCRIPTION_SPACING;
+import static com.invirgance.virge.sql.VirgeSQL.HELP_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
 import com.invirgance.virge.sql.generate.GenerateTable;
 import com.invirgance.virge.tool.Tool;
@@ -69,7 +71,7 @@ public class ImportTable implements Tool
     private char inputDelimiter;
     private boolean truncate;
     private boolean detectTypes;
-    private boolean isMissing = false;
+    private boolean createTable = false;
     private String tableName;
     
     private String jdbcURL;
@@ -195,43 +197,47 @@ public class ImportTable implements Tool
     public String[] getHelp()
     {
         return new String[] {
-            "    --source <file path> or piped data <\"-\">",
-            "    -s <file path> or piped data <\"-\">",
-            "         Alternate method of specifying the source file",
+            HELP_SPACING + "--source <file path> or piped data <\"-\">",
+            HELP_SPACING + "-s <file path> or piped data <\"-\">",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "Alternate method of specifying the source file",
             "",
-            "    --source-type <format>",
-            "    -i <format>",
-            "        Specify the format of the input file. Currently supported options are json, csv, tsv, pipe, delimited, and jbin",
+            HELP_SPACING + "--source-type <format>",
+            HELP_SPACING + "-i <format>",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "Specify the format of the input file. Currently supported options are json, csv, tsv, pipe, delimited, and jbin",
             "",
-            "    --source-delimiter <delimiter>",
-            "    -S <delimiter>",
-            "         Set the column delimiter if the source is a delimited file (e.g. , or |)",
+            HELP_SPACING + "--source-delimiter <delimiter>",
+            HELP_SPACING + "-S <delimiter>",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "Set the column delimiter if the source is a delimited file (e.g. , or |)",
             "",
-            "    --detect-input-types",
-            "    -a",
-            "         Detect the actual datatypes from the source file ex \"5\" would turn into an intergar",
+            HELP_SPACING + "--detect-input-types",
+            HELP_SPACING + "-auto",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "Detect the actual datatypes from the source file ex \"5\" would turn into an intergar",
             "",
-            "    --name <table name>",
-            "    -n <table name>",
-            "        Specifies the table to load. By default the input filename is used as the table name.",
+            HELP_SPACING + "--name <table name>",
+            HELP_SPACING + "-n <table name>",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "Specifies the table to load. By default the input filename is used as the table name.",
             "",
-            "    --create",
-            "        Create the table if its missing.",
+            HELP_SPACING + "--create",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "Create the table if its missing (this is non-desctructive).",
             "",
-            "    --truncate",
-            "        Truncate the table prior to loading. All existing data will be lost!",
+            HELP_SPACING + "--truncate",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "Truncate the table prior to loading. All existing DATA will be LOST!",
             "",
-            "    --username <username>",
-            "    -u <username>",
-            "         The username to use when logging into the database",
+            HELP_SPACING + "--username <username>",
+            HELP_SPACING + "-u <username>",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "The username to use when logging into the database",
             "",
-            "    --password <password>",
-            "    -p <password>",
-            "         The password to use when logging into the database",
+            HELP_SPACING + "--password <password>",
+            HELP_SPACING + "-p <password>",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "The password to use when logging into the database",
             "",
-            "    --jdbc-url <connection url>",
-            "    -j <connection url>",
-            "         Alternate method of specifying the JDBC connection url "
+            HELP_SPACING + "--jdbc-url <connection url>",
+            HELP_SPACING + "-j <connection url>",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "Alternate method of specifying the JDBC connection url ",
+            "",           
+            HELP_SPACING + "--help",
+            HELP_SPACING + "-h",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING  + "Display this menu.",     
         };
     }
 
@@ -273,6 +279,7 @@ public class ImportTable implements Tool
                     if(input instanceof DelimitedInput) ((DelimitedInput)input).setDelimiter(inputDelimiter);
                     
                     break;
+                    
                 case "--name":
                 case "-n":
                     tableName = args[++i];
@@ -289,7 +296,7 @@ public class ImportTable implements Tool
                     
                 case "--create":
                 case "-c":
-                    isMissing = true;
+                    createTable = true;
                     break;
                     
                 case "--username":
@@ -301,10 +308,12 @@ public class ImportTable implements Tool
                 case "-p":
                     password = args[++i];
                     break;
+                    
                 case "--detect-input-types":
-                case "-a":
+                case "-auto":
                     detectTypes = true;
-                    break;                    
+                    break;     
+                    
                 case "--source":
                 case "-s":
                     source = getSource(args[++i]);
@@ -333,6 +342,7 @@ public class ImportTable implements Tool
                     }
             }
         }
+        
         if(tableName == null) return error("No table name specified, and cannot be inferred from source! Use -n to specify a name.");       
         if(source == null) return error("No source specified!");
         if(input == null) return error("No input type specified and unable to autodetect");
@@ -423,7 +433,7 @@ public class ImportTable implements Tool
 
         batch = new BatchOperation(query, sourceIterable);
         
-        if(this.isMissing)
+        if(this.createTable)
         {
             metadata = dbms.getSource().getConnection().getMetaData();
             

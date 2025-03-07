@@ -57,6 +57,7 @@ public class DriverUnregister implements Tool
             "",           
             HELP_SPACING + "--help",
             HELP_SPACING + "-h",
+            HELP_SPACING + "-?",
             HELP_SPACING + HELP_DESCRIPTION_SPACING  + "Display this menu.",     
         };
     }
@@ -84,6 +85,7 @@ public class DriverUnregister implements Tool
                 
                 case "--help":
                 case "-h":
+                case "-?":
                     printToolHelp(this);    
                     break;    
                     

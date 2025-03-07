@@ -49,14 +49,17 @@ public class DriverList implements Tool
     public String[] getHelp()
     {
         return new String[]{
-           HELP_SPACING + "*default",
-           HELP_SPACING + HELP_DESCRIPTION_SPACING  + "Provides a brief overview and connection templates of the current drivers.",
+           HELP_SPACING + "default",
+           HELP_SPACING + HELP_DESCRIPTION_SPACING + "Provides a brief overview and connection templates of the current drivers.",
+           "",
            HELP_SPACING + "--name <driver name>",
            HELP_SPACING + "-n <driver name>",
-           HELP_SPACING + HELP_DESCRIPTION_SPACING  + "View detailed information about a driver.",         
+           HELP_SPACING + HELP_DESCRIPTION_SPACING + "View detailed information about a driver.",         
+           "",
            HELP_SPACING + "--help",
            HELP_SPACING + "-h",
-           HELP_SPACING + HELP_DESCRIPTION_SPACING  + "Display this menu.",         
+           HELP_SPACING + "-?",
+           HELP_SPACING + HELP_DESCRIPTION_SPACING + "Display this menu.",         
         };
     }
     
@@ -80,6 +83,7 @@ public class DriverList implements Tool
                     
                 case "--help":
                 case "-h":
+                case "-?":    
                     printToolHelp(this);    
                     break;
                     
