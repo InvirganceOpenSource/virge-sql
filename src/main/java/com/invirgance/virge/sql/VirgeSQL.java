@@ -111,9 +111,9 @@ public class VirgeSQL
             System.out.println();
             System.out.println("Options:");
             System.out.println();
-            System.out.println(HELP_SPACING + "--all - View all modules and the commands they contain.");
+            System.out.println(HELP_SPACING + "--all - View all tools and the commands they contain.");
             System.out.println();
-            System.out.println("Commands:");
+            System.out.println("Tools:");
             System.out.println();
 
             for(Tool help : tools)
@@ -131,11 +131,11 @@ public class VirgeSQL
     {
         // Note: this command is like a man page.
         System.out.println();
-        System.out.println("Usage: virge.jar sql <module> <command>");
+        System.out.println("Usage: virge.jar sql <tool> <command>");
         System.out.println();
-        System.out.println("The following modules are available.");
+        System.out.println("The following tools are available.");
         System.out.println();
-        System.out.println("Modules:");
+        System.out.println("Tools:");
         System.out.println();
         
         for(Tool tool : tools)
