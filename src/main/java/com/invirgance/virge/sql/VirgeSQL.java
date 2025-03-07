@@ -98,7 +98,7 @@ public class VirgeSQL
         {
             // Top level tools
             System.out.println();
-            System.out.println("Usage: virge.jar sql " + top + sub + "<command>");
+            System.out.println("Usage: virge.jar sql " + top + sub + " <command>");
             System.out.println();
             System.out.println(SELECTED.getShortDescription());
             System.out.println();            
