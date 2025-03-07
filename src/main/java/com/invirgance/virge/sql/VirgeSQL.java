@@ -109,6 +109,10 @@ public class VirgeSQL
             // No command
             System.out.println(HELP);
             System.out.println();
+            System.out.println("Options:");
+            System.out.println();
+            System.out.println(HELP_SPACING + "--all - View all modules and the commands they contain.");
+            System.out.println();
             System.out.println("Commands:");
             System.out.println();
 
@@ -129,7 +133,7 @@ public class VirgeSQL
         System.out.println();
         System.out.println("Usage: virge.jar sql <module> <command>");
         System.out.println();
-        System.out.println("The following modules are available");
+        System.out.println("The following modules are available.");
         System.out.println();
         System.out.println("Modules:");
         System.out.println();
