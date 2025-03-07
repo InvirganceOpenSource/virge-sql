@@ -78,16 +78,14 @@ public class VirgeSQL
         // TODO look at adding sub tools to Tool
         Boolean level = SELECTED != null && selected != null && !SELECTED.getName().equals(selected.getName()) || SELECTED != null && selected == null;
         
-        String top = level ? SELECTED.getName() + " " : "";
+        String top = level ? SELECTED.getName() : "";
         String sub = selected != null ? selected.getName() : "";
-       
-        
-        
-        // Commands without sub commands
+          
+        // Tools without commands
         if(selected != null)
         {
             System.out.println();
-            System.out.println("Usage: virge.jar sql " + top + sub);
+            System.out.println("Usage: virge.jar sql " + top + " " + sub + " <option>");
             System.out.println();
             System.out.println(selected.getShortDescription());
             System.out.println();
@@ -98,17 +96,17 @@ public class VirgeSQL
         }
         else if(SELECTED != null)
         {
-            // Top level commands
+            // Top level tools
             System.out.println();
-            System.out.println("Usage: virge.jar sql " + top + sub + "<tool>");
+            System.out.println("Usage: virge.jar sql " + top + sub + "<command>");
             System.out.println();
             System.out.println(SELECTED.getShortDescription());
             System.out.println();            
             System.out.println("Options:");
             System.out.println();
-            System.out.println(HELP_SPACING + "<tool> --help | -h - to view a tools options.");
+            System.out.println(HELP_SPACING + "<command> -h | --help - to view a tools options.");
             System.out.println();
-            System.out.println("Tools:");
+            System.out.println("Commands:");
             System.out.println();
             
             print(SELECTED.getHelp(), System.out); 
@@ -117,7 +115,7 @@ public class VirgeSQL
         {
             // No command
             System.out.println();
-            System.out.println("Usage: virge.jar sql " + top + sub);
+            System.out.println("Usage: virge.jar sql <tool>");
             System.out.println();
             System.out.println(HELP);
             System.out.println();
