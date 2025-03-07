@@ -218,6 +218,7 @@ public class ImportTable implements Tool
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "Specifies the table to load. By default the input filename is used as the table name.",
             "",
             HELP_SPACING + "--create",
+            HELP_SPACING + "-c",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "Create the table if its missing (this is non-desctructive).",
             "",
             HELP_SPACING + "--truncate",
