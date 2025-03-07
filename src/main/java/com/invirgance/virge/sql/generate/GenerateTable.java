@@ -54,7 +54,7 @@ public class GenerateTable implements Tool
     private Input<JSONObject> input;
 
     private char inputDelimiter;
-    private boolean detectTypes;
+    private boolean detectTypes = false;
     private String tableName;
 
     public Source getSource()
@@ -147,7 +147,7 @@ public class GenerateTable implements Tool
         path = path.toLowerCase();
         
         if(path.endsWith(".json")) return new JSONInput();
-        if(path.endsWith(".csv")) return new CSVInput(); // TODO: need to support proper CSV format
+        if(path.endsWith(".csv")) return new CSVInput(); 
         if(path.endsWith(".jbin")) return new JBINInput();
         
         return null;
@@ -175,6 +175,10 @@ public class GenerateTable implements Tool
     public String[] getHelp()
     {
         return new String[] {
+            "    --source <file path> or piped data <\"-\">",
+            "    -s <file path> or piped data <\"-\">",
+            "         Alternate method of specifying the source file",
+            "",
             "    --source-type <format>",
             "    -i <format>",
             "        Specify the format of the input file. Currently supported options are json, csv, tsv, pipe, delimited, and jbin",
@@ -183,13 +187,13 @@ public class GenerateTable implements Tool
             "    -S <delimiter>",
             "         Set the column delimiter if the source is a delimited file (e.g. , or |)",
             "",
-            "    --source <file path> or piped data <\"-\">",
-            "    -s <file path> or piped data <\"-\">",
-            "         Alternate method of specifying the source file",
-            "",
             "    --name <table name>",
             "    -n <table name>",
-            "         Specify the name for the generated table. Otherwise the name will be created from the 'source'"
+            "         Specify the name for the generated table. Otherwise the name will be created from the 'source'",
+            "",
+            "    --detect-input-types",
+            "    -a",
+            "         Detect the actual datatypes from the source file ex \"5\" would turn into an interger"
         };
     }
 
@@ -272,6 +276,11 @@ public class GenerateTable implements Tool
                     
                     break;
                     
+                case "--detect-input-types":
+                case "-a":
+                    detectTypes = true;
+                    break;        
+                    
                 case "--source":
                 case "-s":
                     source = getSource(args[++i]);
@@ -283,7 +292,6 @@ public class GenerateTable implements Tool
                 case "--name":
                 case "-n":
                     tableName = args[++i];
-                    
                     break;
                     
                 default:
@@ -303,7 +311,7 @@ public class GenerateTable implements Tool
             }
         }
         
-        if(tableName == null) return error("No table name specified! Use -n to specify a name.");
+        if(tableName == null) return error("No table name specified, and cannot be inferred from source! Use -n to specify a name.");
         if(source == null) return error("No source specified!");
         if(input == null) return error("No input type specified and unable to autodetect");
         
@@ -315,70 +323,83 @@ public class GenerateTable implements Tool
         return "\"" + name + "\"";
     }
     
+    /**
+     * Returns a string that can be used to create a table based on the source data.
+     * 
+     * @param source The file source
+     * @param input The input source type (CSVInput, JSONInput, etc...)
+     * @param name The table name
+     * @param detect If types should be inferred from the source files values
+     * @return A String representing a SQL create statement.
+     * @throws Exception If something goes horribly wrong.
+     */
+    public String generateTableSQL(Source source, Input<JSONObject> input, String name, boolean detect) throws Exception
+    {
+       Iterable<JSONObject> iterable;
+       StringBuffer sql = new StringBuffer();
+       StringBuffer comments = new StringBuffer();
+
+       Column[] columns = null;
+       int index;
+
+       if(name == null) Virge.exit(254, "No table name specified! Use -n to specify a name.");
+       if(source == null) Virge.exit(254, "No source specified!");
+       if(input == null) Virge.exit(254, "No input type specified and unable to autodetect");
+
+       iterable = input.read(source);
+
+       if(detect) iterable = new CoerceStringsTransformer().transform(iterable);
+
+       for(JSONObject record : iterable)
+       {
+           if(columns == null) 
+           {
+               columns = new Column[record.size()];
+               index = 0;
+
+               for(String key : record.keySet())
+               {
+                   columns[index++] = new Column(key);
+               }
+           }
+           
+           for(Column column : columns)
+           {
+               column.analyze(record.get(column.name));
+           }   
+       }
+
+       sql.append("CREATE TABLE ");
+       sql.append(name);
+       sql.append(" (\n");
+
+       index = 0;
+
+       for(Column column : columns)
+       {
+           if(index++ > 0) sql.append(",\n");
+
+           sql.append("    ");
+           sql.append(normalizeObjectName(column.name));
+           sql.append(" ");
+           sql.append(column.getType());
+
+           if(column.nullable)
+           {
+               sql.append(" ");
+               sql.append("NULL");
+           }
+       }
+
+       sql.append("\n);\n");
+
+       return comments.toString() + sql.toString();
+    }   
+    
     @Override
     public void execute() throws Exception
     {
-        Iterable<JSONObject> iterable;
-        StringBuffer sql = new StringBuffer();
-        StringBuffer comments = new StringBuffer();
-        
-        Column[] columns = null;
-        int index;
-        
-        
-        if(tableName == null) Virge.exit(254, "No table name specified! Use -n to specify a name.");
-        if(source == null) Virge.exit(254, "No source specified!");
-        if(input == null) Virge.exit(254, "No input type specified and unable to autodetect");
-        
-        iterable = input.read(source);
-        
-        if(detectTypes) iterable = new CoerceStringsTransformer().transform(iterable);
-        
-        for(JSONObject record : iterable)
-        {
-            if(columns == null) 
-            {
-                columns = new Column[record.size()];
-                index = 0;
-                
-                for(String key : record.keySet())
-                {
-                    columns[index++] = new Column(key);
-                }
-            }
-            
-            for(Column column : columns)
-            {
-                column.analyze(record.get(column.name));
-            }
-        }
-        
-        sql.append("CREATE TABLE ");
-        sql.append(tableName);
-        sql.append(" (\n");
-        
-        index = 0;
-        
-        for(Column column : columns)
-        {
-            if(index++ > 0) sql.append(",\n");
-            
-            sql.append("    ");
-            sql.append(normalizeObjectName(column.name));
-            sql.append(" ");
-            sql.append(column.getType());
-            
-            if(column.nullable)
-            {
-                sql.append(" ");
-                sql.append("NULL");
-            }
-        }
-        
-        sql.append("\n);\n");
-        
-        System.out.println(comments);
-        System.out.println(sql);
+        System.out.println(generateTableSQL(source, input, tableName, detectTypes));
     }
     
     private class Column
@@ -416,24 +437,24 @@ public class GenerateTable implements Tool
             
             if(value instanceof Number) return true;
             
-            if(value instanceof String)
-            {
-                string = value.toString();
-                
-                for(int i=0; i<string.length(); i++)
-                {
-                    c = string.charAt(i);
-                    
-                    if(!Character.isDigit(c) && c != point && !(c == '-' && i == 0))
-                    {
-                        return false;
-                    }
-                    
-                    if(c == point) periods++;
-                }
-                
-                return (periods <= 1);
-            }
+//            if(value instanceof String)
+//            {
+//                string = value.toString();
+//                
+//                for(int i=0; i<string.length(); i++)
+//                {
+//                    c = string.charAt(i);
+//                    
+//                    if(!Character.isDigit(c) && c != point && !(c == '-' && i == 0))
+//                    {
+//                        return false;
+//                    }
+//                    
+//                    if(c == point) periods++;
+//                }
+//                
+//                return (periods <= 1);
+//            }
             
             return false;
         }
@@ -448,7 +469,7 @@ public class GenerateTable implements Tool
             if(value instanceof Double) return true;
             if(value instanceof BigDecimal) return true;
             
-            if(value instanceof String && value.toString().indexOf(point) > 0) return true;
+//            if(value instanceof String && value.toString().indexOf(point) > 0) return true;
             
             return false;
         }
@@ -470,6 +491,8 @@ public class GenerateTable implements Tool
             return false;
         }
         
+        // TODO: bug, what if I want my numbers as string?
+        // temporary mitigation: modified isNumeric and isDecimal, and using coerceStringsTransformer in the calling function
         public void analyze(Object value)
         {
             long tempLong;
