@@ -24,7 +24,6 @@ package com.invirgance.virge.sql.drivers;
 
 import com.invirgance.convirgance.jdbc.AutomaticDriver;
 import com.invirgance.convirgance.jdbc.AutomaticDrivers;
-import com.invirgance.convirgance.json.JSONArray;
 import static com.invirgance.virge.sql.VirgeSQL.HELP_DESCRIPTION_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.HELP_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
@@ -189,9 +188,9 @@ public class DriverRegister implements Tool
         }
         else
         {
-            if(artifact.size() != 0) descriptor.setArtifacts(artifact.toArray(new String[artifact.size()]));
-            if(prefix.size() != 0) descriptor.setPrefixes(prefix.toArray(new String[prefix.size()]));
-            if(example.size() != 0) descriptor.setExamples(example.toArray(new String[example.size()]));
+            if(!artifact.isEmpty()) descriptor.setArtifacts(artifact.toArray(new String[artifact.size()]));
+            if(!prefix.isEmpty()) descriptor.setPrefixes(prefix.toArray(new String[prefix.size()]));
+            if(!example.isEmpty()) descriptor.setExamples(example.toArray(new String[example.size()]));
                         
             if(driver != null) descriptor.setDriver(driver);
             if(datasource != null) descriptor.setDataSource(datasource);
@@ -236,9 +235,5 @@ public class DriverRegister implements Tool
         System.err.println("Registered");
         System.out.println(descriptor.toString());
     }
-       
-    private void add(JSONArray<String> array, List<String> addition)
-    {
-        for(String item : addition) if(!array.contains(item)) array.add(item);
-    }
+    
 }

@@ -38,7 +38,7 @@ import com.invirgance.virge.tool.Tool;
  */
 public class DriverUnregister implements Tool
 {
-    private String driver;
+    private String name;
     
     @Override
     public String getName()
@@ -80,7 +80,7 @@ public class DriverUnregister implements Tool
             {
                 case "--name":
                 case "-n":
-                    this.driver = args[++i];
+                    this.name = args[++i];
                     break;
                 
                 case "--help":
@@ -100,8 +100,8 @@ public class DriverUnregister implements Tool
     @Override
     public void execute() throws Exception
     {
-        if(driver == null) printDriver(driver);
-        else unregisterDriver(driver);
+        if(name == null) printDriver(name);
+        else unregisterDriver(name);
     }
     
     @Override
@@ -137,7 +137,7 @@ public class DriverUnregister implements Tool
      */
     public void unregisterDriver(String name)
     {
-        AutomaticDriver driver = AutomaticDrivers.getDriverByName("Bob");
+        AutomaticDriver driver = AutomaticDrivers.getDriverByName(name);
         
         if(driver == null)
         {
