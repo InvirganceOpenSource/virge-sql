@@ -22,9 +22,9 @@ SOFTWARE.
 
 package com.invirgance.virge.sql.drivers;
 
+import com.invirgance.convirgance.jdbc.AutomaticDriver;
+import com.invirgance.convirgance.jdbc.AutomaticDrivers;
 import com.invirgance.convirgance.json.JSONArray;
-import com.invirgance.convirgance.json.JSONObject;
-import com.invirgance.virge.jdbc.JDBCDrivers;
 import static com.invirgance.virge.sql.VirgeSQL.HELP_DESCRIPTION_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.HELP_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
@@ -163,66 +163,78 @@ public class DriverRegister implements Tool
      */
     public void registerDriver()
     {
-        JDBCDrivers drivers = new JDBCDrivers();
-        JSONObject descriptor = drivers.getDescriptor(name);
+        AutomaticDrivers.AutomaticDriverBuilder builder;
+        AutomaticDrivers drivers = new AutomaticDrivers();
+        AutomaticDriver descriptor = drivers.getDriverByName(name);
         
         if(descriptor == null) 
         {
-            descriptor = new JSONObject(true);
+            builder = drivers.createDriver(name)
+                    .artifact(artifact.toArray(new String[artifact.size()]))
+                    .prefix(prefix.toArray(new String[prefix.size()]))
+                    .example(example.toArray(new String[example.size()]));
             
-            descriptor.put("name", name);
-            descriptor.put("artifact", new JSONArray());
-            descriptor.put("driver", "");
-            descriptor.put("datasource", "com.invirgance.virge.jdbc.DriverDataSource");
-            descriptor.put("prefixes", new JSONArray());
-            descriptor.put("examples", new JSONArray());
+            if(driver != null) builder = builder.driver(driver);
+            
+            if(datasource != null)
+            {
+                builder = builder.datasource(datasource);
+            }
+            else
+            {
+                builder = builder.datasource("com.invirgance.virge.jdbc.DriverDataSource");
+            }
+            
+            descriptor = builder.build();
         }
         else
         {
+            if(artifact.size() != 0) descriptor.setArtifacts(artifact.toArray(new String[artifact.size()]));
+            if(prefix.size() != 0) descriptor.setPrefixes(prefix.toArray(new String[prefix.size()]));
+            if(example.size() != 0) descriptor.setExamples(example.toArray(new String[example.size()]));
+                        
+            if(driver != null) descriptor.setDriver(driver);
+            if(datasource != null) descriptor.setDataSource(datasource);
+            
             System.out.println("Updated existing driver: " + name);
         }
         
-        descriptor.put("name", name);
-        
-        if(driver != null) descriptor.put("driver", driver);
-        if(datasource != null) descriptor.put("datasource", datasource);
-        
-        add(descriptor.getJSONArray("artifact"), artifact);
-        add(descriptor.getJSONArray("prefixes"), prefix);
-        add(descriptor.getJSONArray("examples"), example);
-        
-        if(descriptor.get("name") == null || descriptor.getString("name").length() < 1)
+        if(descriptor.getName() == null || descriptor.getName().length() < 1)
         {
             System.err.println("Unique name is required!");
             System.out.println("Hint: use -n to specify a simple name to use when working with the driver.");
+
             System.exit(1);
         }
         
-        if(descriptor.get("driver") == null || descriptor.getString("driver").length() < 1)
+        if(descriptor.getDriver() == null)
         {
             System.err.println("Driver class is required!");
             System.out.println("Hint: use -d to specify the driver class, double check that the 'd' is lowercase.");
+
             System.exit(1);
         }
         
-        if(descriptor.getJSONArray("artifact").size() < 1)
+        if(descriptor.getArtifacts().length < 1)
         {
             System.err.println("Maven artifact is required!");
             System.out.println("Hint: use -a to specify the artifact.");
+ 
             System.exit(1);
         }
         
-        if(descriptor.getJSONArray("prefixes").size() < 1)
+        if(descriptor.getPrefixes().length < 1)
         {
             System.err.println("JDBC URL prefix is required to identify driver URLs!");
             System.out.println("Hint: use -p to specify the prefix.");
+ 
             System.exit(1);
         }
         
-        drivers.addDescriptor(descriptor);
-        
-        System.err.println("Added: " + descriptor.get("driver"));
-        System.out.println(descriptor.toString(4));
+        descriptor.save();
+
+        System.err.println("Registered");
+        System.out.println(descriptor.toString());
     }
        
     private void add(JSONArray<String> array, List<String> addition)

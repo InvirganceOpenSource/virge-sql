@@ -22,9 +22,9 @@ SOFTWARE.
 
 package com.invirgance.virge.sql.drivers;
 
-import com.invirgance.convirgance.json.JSONObject;
+import com.invirgance.convirgance.jdbc.AutomaticDriver;
+import com.invirgance.convirgance.jdbc.AutomaticDrivers;
 import com.invirgance.virge.Virge;
-import com.invirgance.virge.jdbc.JDBCDrivers;
 import static com.invirgance.virge.sql.VirgeSQL.HELP_DESCRIPTION_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.HELP_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
@@ -121,8 +121,10 @@ public class DriverList implements Tool
      */
     public void printDriver(String driver)
     {
-        JDBCDrivers drivers = new JDBCDrivers();
-        JSONObject selected = drivers.getDescriptor(driver);
+        AutomaticDriver selected = AutomaticDrivers.getDriverByName(driver);
+
+//        JDBCDrivers drivers = new JDBCDrivers();
+//        JSONObject selected = drivers.get(driver);
         
         if(selected == null) 
         {
@@ -133,7 +135,7 @@ public class DriverList implements Tool
             Virge.exit(254, "Unknown driver name: " + driver);
         }
         
-        System.out.println(selected.toString(4));
+        System.out.println(selected.toString());
     }
     
     /**
@@ -141,22 +143,21 @@ public class DriverList implements Tool
      */
     public void printAll()
     {
-        JDBCDrivers drivers = new JDBCDrivers();
+        AutomaticDrivers drivers = new AutomaticDrivers();
         
-        // Print command widths (Name: 14, Example: 8)
         int[] widths = new int[]{ 14, 8 };
         
         String example;
         
-        for(JSONObject descriptor : drivers)
+        for(AutomaticDriver descriptor : drivers)
         {
-            example = !descriptor.getJSONArray("examples").isEmpty() ? descriptor.getJSONArray("examples").getString(0) : "";
+             example = !(descriptor.getExamples().length == 0) ? descriptor.getExamples()[0] : "";
             
-            if(widths[0] < descriptor.getString("name").length()) widths[0] = descriptor.getString("name").length();
+            if(widths[0] < descriptor.getName().length()) widths[0] = descriptor.getName().length();
             if(widths[1] < example.length()) widths[1] = example.length();
         }
         
-        System.out.print(formatWidth("Driver Name", widths[0]));
+        System.out.print(formatWidth("Database Name", widths[0]));
         System.out.print("  ");
         System.out.println(formatWidth("Connection String Example", widths[1]));
         
@@ -164,11 +165,11 @@ public class DriverList implements Tool
         System.out.print("  ");
         System.out.println(drawWidth('=', widths[1]));
             
-        for(JSONObject descriptor : drivers)
+        for(AutomaticDriver descriptor : drivers)
         {
-            example = !descriptor.getJSONArray("examples").isEmpty() ? descriptor.getJSONArray("examples").getString(0) : "";
+            example = !(descriptor.getExamples().length == 0) ? descriptor.getExamples()[0] : "";
             
-            System.out.print(formatWidth(descriptor.getString("name"), widths[0]));
+            System.out.print(formatWidth(descriptor.getName(), widths[0]));
             System.out.print("  ");
             System.out.println(formatWidth(example, widths[1]));
         }

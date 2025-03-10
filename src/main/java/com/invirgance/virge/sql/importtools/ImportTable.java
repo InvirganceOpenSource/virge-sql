@@ -35,6 +35,7 @@ import com.invirgance.convirgance.input.Input;
 import com.invirgance.convirgance.input.InputCursor;
 import com.invirgance.convirgance.input.JBINInput;
 import com.invirgance.convirgance.input.JSONInput;
+import com.invirgance.convirgance.jdbc.datasource.DriverDataSource;
 import com.invirgance.convirgance.json.JSONObject;
 import com.invirgance.convirgance.source.FileSource;
 import com.invirgance.convirgance.source.InputStreamSource;
@@ -42,7 +43,6 @@ import com.invirgance.convirgance.source.Source;
 import com.invirgance.convirgance.transform.CoerceStringsTransformer;
 import com.invirgance.virge.Virge;
 import static com.invirgance.virge.Virge.exit;
-import com.invirgance.virge.jdbc.JDBCDrivers;
 import static com.invirgance.virge.sql.VirgeSQL.HELP_DESCRIPTION_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.HELP_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
@@ -58,6 +58,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.sql.DataSource;
 
 /**
  *
@@ -311,7 +312,7 @@ public class ImportTable implements Tool
                     break;
                     
                 case "--detect-input-types":
-                case "-auto":
+                case "-a":
                     detectTypes = true;
                     break;     
                     
@@ -415,9 +416,6 @@ public class ImportTable implements Tool
     {
         List<AtomicOperation> operations = new ArrayList<>();
         Iterable<JSONObject> sourceIterable;
-                
-        Query query = getInsertQuery();
-        DBMS dbms = new DBMS(new JDBCDrivers().getDataSource(jdbcURL, username, password));
         
         DatabaseMetaData metadata;
         GenerateTable create;
@@ -426,6 +424,10 @@ public class ImportTable implements Tool
         TransactionOperation transaction;
         BatchOperation batch; 
         
+        Query query = getInsertQuery();
+        DataSource dataSource = DriverDataSource.getDataSource(jdbcURL, username, password);
+        DBMS dbms = new DBMS(dataSource);
+          
         if(query == null) Virge.exit(5, "Source provided no records to load!");
         
         sourceIterable = input.read(source);
@@ -463,6 +465,7 @@ public class ImportTable implements Tool
 
         try 
         {
+            // Note: Convirgance JDBC, Schema issue
             tables = metaData.getTables(null, null, tableName, new String[] {"TABLE"});
             if(tables.next()) return true;
 

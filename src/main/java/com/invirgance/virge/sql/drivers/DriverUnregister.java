@@ -23,8 +23,8 @@ SOFTWARE.
 package com.invirgance.virge.sql.drivers;
 
 import com.invirgance.convirgance.ConvirganceException;
-import com.invirgance.convirgance.json.JSONObject;
-import com.invirgance.virge.jdbc.JDBCDrivers;
+import com.invirgance.convirgance.jdbc.AutomaticDriver;
+import com.invirgance.convirgance.jdbc.AutomaticDrivers;
 import static com.invirgance.virge.sql.VirgeSQL.HELP_DESCRIPTION_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.HELP_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
@@ -123,32 +123,30 @@ public class DriverUnregister implements Tool
      */
     public void printDriver(String driver)
     {
-        JDBCDrivers drivers = new JDBCDrivers();
-        JSONObject selected = drivers.getDescriptor(driver);
-        
+        AutomaticDriver selected = AutomaticDrivers.getDriverByName(driver);
+
         if(selected == null) throw new ConvirganceException("Unknown driver: " + driver);
         
-        System.out.println(selected.toString(4));
+        System.out.println(selected.toString());
     }
     
     /**
      * Removes the driver, Virge will no longer be able to use this.
      * 
-     * @param driver The drivers name.
+     * @param name The drivers name.
      */
-    public void unregisterDriver(String driver)
+    public void unregisterDriver(String name)
     {
-        JDBCDrivers drivers = new JDBCDrivers();
-        JSONObject descriptor = drivers.getDescriptor(driver);
+        AutomaticDriver driver = AutomaticDrivers.getDriverByName("Bob");
         
-        if(descriptor == null)
+        if(driver == null)
         {
-            System.err.println("Driver '" + driver + "' not found!");
+            System.err.println("Driver '" + name + "' not found!");
             System.out.println("Hint: Use the 'list' command to view the name of each driver.");
             System.exit(1);
         }
         
-        System.out.println("Removed Driver: " + driver);
-        drivers.deleteDescriptor(descriptor);
+        System.out.println("Removed Driver: " + name);
+        driver.delete();
     }
 }
