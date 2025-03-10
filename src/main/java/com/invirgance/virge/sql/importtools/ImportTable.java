@@ -198,24 +198,24 @@ public class ImportTable implements Tool
     public String[] getHelp()
     {
         return new String[] {
-            HELP_SPACING + "--source <file path> or piped data <\"-\">",
-            HELP_SPACING + "-s <file path> or piped data <\"-\">",
+            HELP_SPACING + "--source <PATH> or piped data -",
+            HELP_SPACING + "-s <PATH> or piped data -",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "Alternate method of specifying the source file",
             "",
-            HELP_SPACING + "--source-type <format>",
-            HELP_SPACING + "-i <format>",
+            HELP_SPACING + "--source-type [FORMAT]",
+            HELP_SPACING + "-i [FORMAT]",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "Specify the format of the input file. Currently supported options are json, csv, tsv, pipe, delimited, and jbin",
             "",
-            HELP_SPACING + "--source-delimiter <delimiter>",
-            HELP_SPACING + "-S <delimiter>",
+            HELP_SPACING + "--source-delimiter [DELIMITER]",
+            HELP_SPACING + "-S [DELIMITER]",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "Set the column delimiter if the source is a delimited file (e.g. , or |)",
             "",
             HELP_SPACING + "--detect-input-types",
-            HELP_SPACING + "-auto",
+            HELP_SPACING + "-a",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "Detect the actual datatypes from the source file ex \"5\" would turn into an intergar",
             "",
-            HELP_SPACING + "--name <table name>",
-            HELP_SPACING + "-n <table name>",
+            HELP_SPACING + "--name [NAME]",
+            HELP_SPACING + "-n [NAME]",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "Specifies the table to load. By default the input filename is used as the table name.",
             "",
             HELP_SPACING + "--create",
@@ -225,16 +225,16 @@ public class ImportTable implements Tool
             HELP_SPACING + "--truncate",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "Truncate the table prior to loading. All existing DATA will be LOST!",
             "",
-            HELP_SPACING + "--username <username>",
-            HELP_SPACING + "-u <username>",
+            HELP_SPACING + "--username <USERNAME>",
+            HELP_SPACING + "-u <USERNAME>",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "The username to use when logging into the database",
             "",
-            HELP_SPACING + "--password <password>",
-            HELP_SPACING + "-p <password>",
+            HELP_SPACING + "--password <PASSWORD>",
+            HELP_SPACING + "-p <PASSWORD>",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "The password to use when logging into the database",
             "",
-            HELP_SPACING + "--jdbc-url <connection url>",
-            HELP_SPACING + "-j <connection url>",
+            HELP_SPACING + "--jdbc-url <URL>",
+            HELP_SPACING + "-j <URL>",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "Alternate method of specifying the JDBC connection url ",
             "",           
             HELP_SPACING + "--help",
@@ -488,7 +488,6 @@ public class ImportTable implements Tool
                 return new DelimitedInput('\t');
             
             case "pipe":
-            case "|":
                 return new DelimitedInput('|');
             
             case "delimited":
