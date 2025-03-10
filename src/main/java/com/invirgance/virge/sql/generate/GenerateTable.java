@@ -170,31 +170,31 @@ public class GenerateTable implements Tool
     @Override
     public String getExample()
     {
-        return "virge.jar sql drivers generate table -source <file|url>";
+        return "virge.jar sql drivers generate table -source <FILE | URL>";
     }    
     
     @Override
     public String[] getHelp()
     {
         return new String[] {
-            HELP_SPACING + "--source <file path> or piped data <\"-\">",
-            HELP_SPACING +  "-s <file path> or piped data <\"-\">",
+            HELP_SPACING + "--source <PATH> or piped data -",
+            HELP_SPACING +  "-s <PATH> or piped data -",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "Alternate method of specifying the source file",
             "",
-            HELP_SPACING + "--source-type <format>",
-            HELP_SPACING + "-i <format>",
+            HELP_SPACING + "--source-type <FORMAT>",
+            HELP_SPACING + "-i <FORMAT>",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "Specify the format of the input file. Currently supported options are json, csv, tsv, pipe, delimited, and jbin",
             "",
-            HELP_SPACING + "--source-delimiter <delimiter>",
-            HELP_SPACING + "-S <delimiter>",
+            HELP_SPACING + "--source-delimiter <DELIMITER>",
+            HELP_SPACING + "-S <DELIMITER>",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "Set the column delimiter if the source is a delimited file (e.g. , or |)",
             "",
-            HELP_SPACING + "--name <table name>",
-            HELP_SPACING + "-n <table name>",
+            HELP_SPACING + "--name <NAME>",
+            HELP_SPACING + "-n <NAME>",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "Specify the name for the generated table. Otherwise the name will be created from the 'source'",
             "",
             HELP_SPACING + "--detect-input-types",
-            HELP_SPACING + "-auto",
+            HELP_SPACING + "-a",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "Detect the actual datatypes from the source file ex \"5\" would turn into an interger",
             "",           
             HELP_SPACING + "--help",
@@ -222,7 +222,6 @@ public class GenerateTable implements Tool
                 return new DelimitedInput('\t');
             
             case "pipe":
-            case "|":
                 return new DelimitedInput('|');
             
             case "delimited":
@@ -284,7 +283,7 @@ public class GenerateTable implements Tool
                     break;
                     
                 case "--detect-input-types":
-                case "-auto":
+                case "-a":
                     detectTypes = true;
                     break;        
                     
