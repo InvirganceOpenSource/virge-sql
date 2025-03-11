@@ -82,7 +82,6 @@ public class DriverList implements Tool
                     
                 case "--help":
                 case "-h":
-                case "-?":    
                     printToolHelp(this);    
                     break;
                     
@@ -122,9 +121,6 @@ public class DriverList implements Tool
     {
         AutomaticDriver selected = AutomaticDrivers.getDriverByName(driver);
 
-//        JDBCDrivers drivers = new JDBCDrivers();
-//        JSONObject selected = drivers.get(driver);
-        
         if(selected == null) 
         {
             System.out.println();
@@ -150,7 +146,7 @@ public class DriverList implements Tool
         
         for(AutomaticDriver descriptor : drivers)
         {
-             example = !(descriptor.getExamples().length == 0) ? descriptor.getExamples()[0] : "";
+            example = !(descriptor.getExamples().length == 0) ? descriptor.getExamples()[0] : "";
             
             if(widths[0] < descriptor.getName().length()) widths[0] = descriptor.getName().length();
             if(widths[1] < example.length()) widths[1] = example.length();
