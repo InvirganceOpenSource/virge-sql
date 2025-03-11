@@ -85,7 +85,7 @@ public class VirgeSQL
         if(selected != null)
         {
             System.out.println();
-            System.out.println("Usage: virge.jar sql " + top + " " + sub + " <option>");
+            System.out.println("Usage: virge.jar sql " + top + " " + sub + " <OPTIONS>");
             System.out.println();
             System.out.println(selected.getShortDescription());
             System.out.println();
@@ -98,13 +98,15 @@ public class VirgeSQL
         {
             // Top level tools
             System.out.println();
-            System.out.println("Usage: virge.jar sql " + top + sub + " <command>");
+            System.out.println("Usage: virge.jar sql " + top + sub + " <COMMAND>");
             System.out.println();
             System.out.println(SELECTED.getShortDescription());
             System.out.println();            
             System.out.println("Options:");
             System.out.println();
-            System.out.println(HELP_SPACING + "<command> -h | --help - to view a tools options.");
+            System.out.println(HELP_SPACING + "--help");
+            System.out.println(HELP_SPACING + "-h");
+            System.out.println(HELP_SPACING + HELP_DESCRIPTION_SPACING + "View a tools options.");
             System.out.println();
             System.out.println("Commands:");
             System.out.println();
@@ -115,13 +117,9 @@ public class VirgeSQL
         {
             // No command
             System.out.println();
-            System.out.println("Usage: virge.jar sql <tool>");
+            System.out.println("Usage: virge.jar sql <TOOL>");
             System.out.println();
             System.out.println(HELP);
-            System.out.println();
-            System.out.println("Options:");
-            System.out.println();
-            System.out.println(HELP_SPACING + "--all - View all tools and the commands they contain.");
             System.out.println();
             System.out.println("Tools:");
             System.out.println();
@@ -132,28 +130,6 @@ public class VirgeSQL
             }  
 
             System.out.println(); 
-        }
-        
-        System.exit(1);
-    }
-    
-    public static void printAllBriefHelp()
-    {
-        // Note: this command is like a man page.
-        System.out.println();
-        System.out.println("Usage: virge.jar sql <tool> <command>");
-        System.out.println();
-        System.out.println("The following tools are available.");
-        System.out.println();
-        System.out.println("Tools:");
-        System.out.println();
-        
-        for(Tool tool : tools)
-        {
-            System.out.println(" " + tool.getName() + " - " + tool.getShortDescription());
-            System.out.println("   Commands:");
-            
-            print(tool.getHelp(), System.out);
         }
         
         System.exit(1);
@@ -171,13 +147,6 @@ public class VirgeSQL
         if(args.length == 0 || args[0].equals("--help") || args[0].equals("-h") || args[0].equals("-?"))
         {   
             printToolHelp(null);
-         
-            return;
-        }
-        
-        if(args[0].equals("--all"))
-        {   
-            printAllBriefHelp();
          
             return;
         }

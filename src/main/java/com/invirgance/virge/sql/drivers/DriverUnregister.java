@@ -147,6 +147,8 @@ public class DriverUnregister implements Tool
         }
         
         System.out.println("Removed Driver: " + name);
-        driver.delete();
+        
+        // Note: config conflict with pre-ConvirganceJDBC, need to remove old .virge folder from user home
+        driver.delete();      
     }
 }
