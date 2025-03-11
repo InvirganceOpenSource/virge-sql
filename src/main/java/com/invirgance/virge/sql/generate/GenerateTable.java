@@ -261,7 +261,6 @@ public class GenerateTable implements Tool
             {
                 case "--help":
                 case "-h":
-                case "-?":
                     printToolHelp(this);
                     return true;
                 

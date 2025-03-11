@@ -262,7 +262,6 @@ public class ImportTable implements Tool
             {
                 case "--help":
                 case "-h":
-                case "-?":
                     printToolHelp(this);
                     return true;
                 

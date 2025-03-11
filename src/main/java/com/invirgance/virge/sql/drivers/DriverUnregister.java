@@ -84,7 +84,6 @@ public class DriverUnregister implements Tool
                 
                 case "--help":
                 case "-h":
-                case "-?":
                     printToolHelp(this);    
                     break;    
                     
