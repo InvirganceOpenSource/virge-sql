@@ -85,7 +85,6 @@ public class DriverRegister implements Tool
             "",           
             HELP_SPACING + "--help",
             HELP_SPACING + "-h",
-            HELP_SPACING + "-?",
             HELP_SPACING + HELP_DESCRIPTION_SPACING  + "Display this menu.",     
         };
     }
