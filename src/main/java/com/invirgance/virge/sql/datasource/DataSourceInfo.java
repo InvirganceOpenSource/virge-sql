@@ -95,6 +95,31 @@ public class DataSourceInfo implements Tool
         return true;
     }
     
+    @Override
+    public void execute() throws Exception
+    {
+        if(this.sourceName != null) printDataSourceProperties();
+        else displayDataSources();
+    }
+ 
+    private void displayDataSources()
+    {
+        DataSourceManager manager;
+        Iterator<AutomaticDriver> drivers;
+        AutomaticDriver driver;
+        drivers = new AutomaticDrivers().iterator();
+
+        System.out.println("Data Sources:");
+        // Note: add print instructions/hint for adding more datasources
+        while(drivers.hasNext()) 
+        {
+            driver = drivers.next();
+
+            manager = new DataSourceManager(driver.getDataSource());
+            System.out.println(HELP_SPACING + driver.getDataSource().getClass().getSimpleName());
+        }
+    }
+    
     private void printDataSourceProperties()
     {
         DataSourceManager manager;
@@ -127,31 +152,5 @@ public class DataSourceInfo implements Tool
         System.err.println("Unknown DataSource: " + this.sourceName);
         System.err.println("Hint: Run this command without any options to view all DataSources.");
     }
-    
-    @Override
-    public void execute() throws Exception
-    {        
-        DataSourceManager manager;
-        Iterator<AutomaticDriver> drivers;
-        AutomaticDriver driver;
-        
-        if(this.sourceName != null) 
-        {
-           printDataSourceProperties();
-           return;
-        }
-                
-        drivers = new AutomaticDrivers().iterator();
 
-        System.out.println("Data Sources:");
-
-        while(drivers.hasNext()) 
-        {
-            driver = drivers.next();
-
-            manager = new DataSourceManager(driver.getDataSource());
-            System.out.println(HELP_SPACING + driver.getDataSource().getClass().getSimpleName());
-        }
-    }
-    
 }
