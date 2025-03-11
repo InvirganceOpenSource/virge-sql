@@ -22,7 +22,7 @@ SOFTWARE.
 
 package com.invirgance.virge.sql;
 
-import static com.invirgance.virge.sql.VirgeSQL.HELP_SPACING;
+import static com.invirgance.virge.Virge.HELP_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
 import com.invirgance.virge.sql.drivers.DriverList;
 import com.invirgance.virge.sql.drivers.DriverRegister;

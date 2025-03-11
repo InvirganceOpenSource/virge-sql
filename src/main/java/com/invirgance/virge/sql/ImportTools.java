@@ -21,7 +21,7 @@ SOFTWARE.
  */
 package com.invirgance.virge.sql;
 
-import static com.invirgance.virge.sql.VirgeSQL.HELP_SPACING;
+import static com.invirgance.virge.Virge.HELP_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
 import com.invirgance.virge.sql.importtools.ImportTable;
 import com.invirgance.virge.tool.Tool;

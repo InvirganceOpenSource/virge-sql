@@ -25,8 +25,8 @@ package com.invirgance.virge.sql.drivers;
 import com.invirgance.convirgance.ConvirganceException;
 import com.invirgance.convirgance.jdbc.AutomaticDriver;
 import com.invirgance.convirgance.jdbc.AutomaticDrivers;
-import static com.invirgance.virge.sql.VirgeSQL.HELP_DESCRIPTION_SPACING;
-import static com.invirgance.virge.sql.VirgeSQL.HELP_SPACING;
+import static com.invirgance.virge.Virge.HELP_DESCRIPTION_SPACING;
+import static com.invirgance.virge.Virge.HELP_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
 import com.invirgance.virge.tool.Tool;
 
