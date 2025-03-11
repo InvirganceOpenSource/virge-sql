@@ -70,7 +70,7 @@ public class GenerationTools implements Tool
     public boolean parse(String[] args, int start) throws Exception
     { 
         if(start == args.length) return false;
-        if("-h".equals(args[start]) || "--help".equals(args[start]) || "-?".equals(args[start])) return false;
+        if("-h".equals(args[start]) || "--help".equals(args[start])) return false;
 
         for(Tool tool : TOOLS)
         { 

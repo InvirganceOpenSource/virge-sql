@@ -143,7 +143,6 @@ public class VirgeSQL
      */
     public static void main(String[] args) throws Exception
     {
-        // NOTE: -? might be a special pattern in some shells, zsh?
         if(args.length == 0 || args[0].equals("--help") || args[0].equals("-h"))
         {   
             printToolHelp(null);
