@@ -1,6 +1,23 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Copyright 2024 INVIRGANCE LLC
+
+Permission is hereby granted, free of charge, to any person obtaining a copy 
+of this software and associated documentation files (the “Software”), to deal 
+in the Software without restriction, including without limitation the rights to 
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
+of the Software, and to permit persons to whom the Software is furnished to do 
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all 
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+SOFTWARE.
  */
 package com.invirgance.virge.sql.connections;
 
@@ -13,7 +30,7 @@ import static com.invirgance.virge.Virge.HELP_DESCRIPTION_SPACING;
 import static com.invirgance.virge.Virge.HELP_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
 import com.invirgance.virge.tool.Tool;
-import java.sql.SQLException;
+import java.util.HashMap;
 
 /**
  *
@@ -23,11 +40,10 @@ public class RegisterStoredConnection implements Tool
 {
     private String username;
     private String name;
-    
-    // Security issue?   
     private String password = "";
-    
     private String url;
+    
+    private HashMap<String, String> extras = new HashMap<>();
     
     @Override
     public String getName()
@@ -103,7 +119,11 @@ public class RegisterStoredConnection implements Tool
                     break;
                     
                 default:
-                    return false;
+//                    System.out.println(args[i]);
+//                    System.out.println(args[i++]);
+//                    if(!args[i].contains("--")) return false;
+//                    extras.put(args[i], args[++i]);
+                return false;    
             }
         }
         
@@ -122,7 +142,8 @@ public class RegisterStoredConnection implements Tool
     private void addConnection()
     {
         String name;
-        
+        StoredConnection.DataSourceConfig config;
+
         StoredConnection connection;
         AutomaticDriver driver = AutomaticDrivers.getDriverByURL(this.url);
         
@@ -141,21 +162,41 @@ public class RegisterStoredConnection implements Tool
                 .password(this.password)
                 .build();
         
-        try
-        {
-            connection.getConnection();
-        }
-        catch (SQLException ex)
+        if(connection.getConnection() == null)
         {
             // Note: should we test the connection? 
             // Meh offer connection test command? seems superfluous
             System.err.println("Warning: Connection test failed!");
             System.out.println();
-            System.err.println("Stored Connection Exception: " + ex.toString());
-            System.out.println();
         }
         
         connection.save();
+        
+        if(!this.extras.isEmpty())
+        {
+//            config = connection.getDataSourceConfig();
+//
+//            for(Map.Entry<String, String> entry : this.extras.entrySet())
+//            {
+//                String value = entry.getValue();
+//                String oldKey = entry.getKey()+"";
+//                String property = normalizeExtraOption(oldKey);
+//                
+//                System.out.println("");
+//                System.out.println("PROPERTY");
+//                System.out.println(property);
+//                System.out.println(value);
+//                System.out.println("VALUE");
+//                System.out.println("");
+//                config.setProperty(property, value);
+//                
+//            }
+        }
         System.out.println("Saved new Stored Connection");
+    }
+    
+    private String normalizeExtraOption(String option)
+    {
+        return option.substring(2);
     }
 }
