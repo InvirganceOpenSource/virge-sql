@@ -6,7 +6,7 @@ package com.invirgance.virge.sql;
 
 import static com.invirgance.virge.Virge.HELP_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
-import com.invirgance.virge.sql.connections.CreateStoredConnection;
+import com.invirgance.virge.sql.connections.RegisterStoredConnection;
 import com.invirgance.virge.tool.Tool;
 import java.util.ArrayList;
 
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class ConnectionTools implements Tool
 {
     private static final Tool[] TOOLS = new Tool[]{
-        new CreateStoredConnection(),
+        new RegisterStoredConnection(),
     };
 
     private Tool tool;

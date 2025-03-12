@@ -19,7 +19,7 @@ import java.sql.SQLException;
  *
  * @author tadghh
  */
-public class CreateStoredConnection implements Tool
+public class RegisterStoredConnection implements Tool
 {
     private String username;
     private String name;
