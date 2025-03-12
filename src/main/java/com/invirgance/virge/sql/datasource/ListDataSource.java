@@ -63,6 +63,7 @@ public class ListDataSource implements Tool
            HELP_SPACING + "--name [NAME]",
            HELP_SPACING + "-n [NAME]",
            HELP_SPACING + HELP_DESCRIPTION_SPACING + "View a DataSource's properties.",         
+           HELP_SPACING + HELP_DESCRIPTION_SPACING + "Ex: -n OracleDataSource",         
            "",
            HELP_SPACING + "--help",
            HELP_SPACING + "-h",
@@ -110,13 +111,13 @@ public class ListDataSource implements Tool
         drivers = new AutomaticDrivers().iterator();
 
         System.out.println("Data Sources:");
-        // Note: add print instructions/hint for adding more datasources
+        
         while(drivers.hasNext()) 
         {
             driver = drivers.next();
 
             manager = new DataSourceManager(driver.getDataSource());
-            System.out.println(HELP_SPACING + driver.getDataSource().getClass().getSimpleName());
+            System.out.println(HELP_SPACING + driver.getDataSource().getClass().getName());
         }
     }
     
@@ -136,7 +137,7 @@ public class ListDataSource implements Tool
             {
                 manager = new DataSourceManager(driver.getDataSource());
                 
-                System.out.println(driver.getName() + " (" + simple + ")");
+                System.out.println(driver.getName() + " (" + driver.getDataSource().getClass().getName() + ")");
                 System.out.println();
                 System.out.println(HELP_SPACING + "Properties:");
                 
