@@ -119,6 +119,7 @@ public class DriverList implements Tool
      */
     public void printDriver(String driver)
     {
+        // Note: this is case-insensitve
         AutomaticDriver selected = AutomaticDrivers.getDriverByName(driver);
 
         if(selected == null) 
