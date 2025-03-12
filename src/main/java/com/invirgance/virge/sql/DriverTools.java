@@ -24,10 +24,10 @@ package com.invirgance.virge.sql;
 
 import static com.invirgance.virge.Virge.HELP_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
-import com.invirgance.virge.sql.datasource.DataSourceInfo;
-import com.invirgance.virge.sql.drivers.DriverList;
-import com.invirgance.virge.sql.drivers.DriverRegister;
-import com.invirgance.virge.sql.drivers.DriverUnregister;
+import com.invirgance.virge.sql.datasource.ListDataSource;
+import com.invirgance.virge.sql.drivers.ListDriver;
+import com.invirgance.virge.sql.drivers.RegisterDriver;
+import com.invirgance.virge.sql.drivers.UnregisterDriver;
 import com.invirgance.virge.tool.Tool;
 import java.util.ArrayList;
 
@@ -40,10 +40,10 @@ public class DriverTools implements Tool
 {
     
     private static final Tool[] TOOLS = new Tool[]{
-        new DriverList(),
-        new DriverRegister(),
-        new DriverUnregister(),
-        new DataSourceInfo()
+        new ListDriver(),
+        new RegisterDriver(),
+        new UnregisterDriver(),
+        new ListDataSource()
     };
      
     private Tool tool;

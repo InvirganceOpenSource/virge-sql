@@ -36,7 +36,7 @@ import com.invirgance.virge.tool.Tool;
  * 
  * @author tadghh
  */
-public class DriverUnregister implements Tool
+public class UnregisterDriver implements Tool
 {
     private String name;
     

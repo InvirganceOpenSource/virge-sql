@@ -36,7 +36,7 @@ import java.util.List;
  * 
  * @author tadghh
  */
-public class DriverRegister implements Tool
+public class RegisterDriver implements Tool
 {
     private String driver;
     private String name;

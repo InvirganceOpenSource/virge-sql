@@ -37,7 +37,7 @@ import java.util.Iterator;
  * 
  * @author tadghh
  */
-public class DataSourceInfo implements Tool
+public class ListDataSource implements Tool
 {
     private String sourceName;
     
