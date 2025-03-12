@@ -19,89 +19,89 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
 SOFTWARE.
  */
+package com.invirgance.virge.sql.connections;
 
-package com.invirgance.virge.sql;
-
+import com.invirgance.convirgance.jdbc.StoredConnection;
+import com.invirgance.convirgance.jdbc.StoredConnections;
+import static com.invirgance.virge.Virge.HELP_DESCRIPTION_SPACING;
 import static com.invirgance.virge.Virge.HELP_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
-import com.invirgance.virge.sql.connections.RegisterStoredConnection;
-import com.invirgance.virge.sql.connections.UnregisterStoredConnection;
 import com.invirgance.virge.tool.Tool;
-import java.util.ArrayList;
 
 /**
- * For creating StoredConnections and configuring DataSources.
+ *
  * @author tadghh
  */
-public class ConnectionTools implements Tool
+public class UnregisterStoredConnection implements Tool
 {
-    private static final Tool[] TOOLS = new Tool[]{
-        new RegisterStoredConnection(),
-        new UnregisterStoredConnection()
-    };
-
-    private Tool tool;
-
+    private String name;
+    
     @Override
     public String getName()
     {
-        return "connection";
+        return "remove";
     }
     
-    @Override
+    @Override 
     public String getShortDescription()
     {
-        return "Configure StoredConnections and DataSources.";
+        return "Remove a Stored Connection.";
     }
     
     @Override
     public String[] getHelp()
     {
-        ArrayList<String> help = new ArrayList<>();
-        
-        for(Tool tool : TOOLS)
-        {
-            help.add(HELP_SPACING + tool.getName() + " - " + tool.getShortDescription());
-        }
-        
-        return help.toArray(new String[0]);
+        return new String[]{
+           HELP_SPACING + "--name <NAME>",
+           HELP_SPACING + "-n <NAME>",
+           HELP_SPACING + HELP_DESCRIPTION_SPACING + "The name of the connection to remove.",         
+           "",
+           HELP_SPACING + "--help",
+           HELP_SPACING + "-h",
+           HELP_SPACING + HELP_DESCRIPTION_SPACING + "Display this menu.",         
+        };
     }
 
     @Override
     public boolean parse(String[] args, int start) throws Exception
-    { 
+    {
+        // No parameter
         if(start == args.length) return false;
-        if("-h".equals(args[start]) || "--help".equals(args[start])) return false;
-
-        for(Tool tool : TOOLS)
-        { 
-            if(tool.getName().equals(args[start]))
+        
+        for(int i=start; i<args.length; i++)
+        {
+            switch(args[i])
             {
-                this.tool = tool;
-                
-                if(!this.tool.parse(args, start + 1))
-                {                    
-                    if(args.length != start+1) System.err.println("\nUnknown option: " + args[start + 1]);
+                case "--name":
+                case "-n":
+                    this.name = args[++i];
+                    break;
                     
-                    printToolHelp(this.tool);
-                }
-                else
-                {
-                    return true;
-                }
-            }  
+                case "--help":
+                case "-h":
+                    printToolHelp(this);    
+                    break;
+                    
+                default:
+                return false;    
+            }
         }
         
-        System.err.println("\nUnknown command: " + args[start]);
-             
-        return false;
+        return true;
     }
-
 
     @Override
     public void execute() throws Exception
     {
-        tool.execute();
+        removeConnection();
     }
     
+    private void removeConnection()
+    {
+        StoredConnection driver = StoredConnections.getConnection(this.name);
+        
+        driver.delete();
+             
+        System.out.println("Removed Stored Connection: " + this.name);
+    }
 }
