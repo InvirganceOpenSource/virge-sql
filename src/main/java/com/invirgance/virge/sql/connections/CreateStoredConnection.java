@@ -45,9 +45,6 @@ public class CreateStoredConnection implements Tool
     public String[] getHelp()
     {
         return new String[]{
-           HELP_SPACING + "default",
-           HELP_SPACING + HELP_DESCRIPTION_SPACING + "Displays the current DataSources.",
-           "",
            HELP_SPACING + "--username <USERNAME>",
            HELP_SPACING + "-u <USERNAME>",
            HELP_SPACING + HELP_DESCRIPTION_SPACING + "Connection username.",
