@@ -81,7 +81,7 @@ public class ConnectionTools implements Tool
                 
                 if(!this.tool.parse(args, start + 1))
                 {                    
-                    if(args.length != start+1) System.err.println("\nUnknown option: " + args[start + 1]);
+                    //if(args.length != start+1) System.err.println("\nUnknown option: " + args[start + 1]);
                     
                     printToolHelp(this.tool);
                 }

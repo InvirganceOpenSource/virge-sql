@@ -26,12 +26,15 @@ import com.invirgance.convirgance.jdbc.AutomaticDriver;
 import com.invirgance.convirgance.jdbc.AutomaticDrivers;
 import com.invirgance.convirgance.jdbc.StoredConnection;
 import com.invirgance.convirgance.jdbc.StoredConnections.DataSourceConfigBuilder;
+import com.invirgance.convirgance.jdbc.datasource.DataSourceManager;
 import com.invirgance.virge.Virge;
 import static com.invirgance.virge.Virge.HELP_DESCRIPTION_SPACING;
 import static com.invirgance.virge.Virge.HELP_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
 import com.invirgance.virge.tool.Tool;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,6 +50,7 @@ public class RegisterStoredConnection implements Tool
     private String name;
     private String password = "";
     private String url;
+    private String database;
 
     private HashMap<String, String> extras = new HashMap<>();
     
@@ -80,7 +84,11 @@ public class RegisterStoredConnection implements Tool
            "",
            HELP_SPACING + "--name [NAME]",
            HELP_SPACING + "-n [NAME]",
-           HELP_SPACING + HELP_DESCRIPTION_SPACING + "Provide an optional name for the connection, by default the Driver Name and the Current User will be used.",         
+           HELP_SPACING + HELP_DESCRIPTION_SPACING + "Provide an optional name for the stored connection, by default the Driver Name and the User will be used.",         
+           "",
+           HELP_SPACING + "--database <[TYPE]>",
+           HELP_SPACING + "-d <[TYPE]>",
+           HELP_SPACING + HELP_DESCRIPTION_SPACING + "Set the type of database to create a stored connection (config) for.",         
            "",
            HELP_SPACING + "--type-datasource",
            HELP_SPACING + HELP_DESCRIPTION_SPACING + "Toggle this flag to add the StoredConnection as a data source config.",         
@@ -124,6 +132,11 @@ public class RegisterStoredConnection implements Tool
                     this.url = args[++i];
                     break;
                     
+                case "--database":
+                case "-d":
+                    this.database = args[++i];
+                    break;
+                    
                 case "--type-datasource":
                     this.datasourceMode = true;
                     break;
@@ -138,19 +151,48 @@ public class RegisterStoredConnection implements Tool
                     break;
                     
                 default:
-                    var current = args[i];
-                    var optionValue = args[++i];
-//                    deal with bad args, show hint command
-//                    if(!optionValue.startsWith("--")) break;
-                    extras.put(current, optionValue);
+                    int index = i;
 
+                    if(index != args.length && this.datasourceMode)
+                    {
+                        var option = args[i];
+                        String value;
+                    
+                        if(!option.startsWith("--")) 
+                        {
+                            System.err.println("Unknown option: " + option);
+                            
+                            return false;
+                        }
+                        
+                        if(index + 1 < args.length)
+                        {
+                            value = args[++i];
+                            extras.put(option, value);
+                        }
+                        else
+                        {
+                            System.err.println("Missing value for: " + option);
+                            return false;
+                        }   
+                    }
+                    else
+                    {   
+                        System.err.println("Unknown option: " + args[i]);
+                        System.out.println("Hint: Are you trying to configure a datasource? add --type-datasource");
+                        return false;
+                    }
             }
         }
         
-        if(!this.datasourceMode)
+        if(this.datasourceMode && this.database == null)
+        {
+            Virge.exit(255, "Failed: Attempted to create a stored connection without a selected database...");
+        }
+        else
         {
             if(this.username == null) Virge.exit(255, "Failed: Stored Connection can not be created without a username");
-            if(this.url == null) Virge.exit(255, "Failed: The Stored Connection was not provided a url...");
+            if(this.url == null) Virge.exit(255, "Failed: The Stored Connection was not provided a url...");  
         }
 
         return true;
@@ -165,35 +207,53 @@ public class RegisterStoredConnection implements Tool
     
     private void addDataSourceConfigConnection()
     {
+        String configName;        
         DataSourceConfigBuilder storedConnection;
-        AutomaticDriver driver = AutomaticDrivers.getDriverByURL(this.url);
         
-        name = this.name == null ? driver.getName() + this.username : this.name;
-
-        storedConnection = driver.createConnection(name).datasource();
+        AutomaticDriver driver = AutomaticDrivers.getDriverByName(this.database);
+        
+        configName = this.name == null ? driver.getName() : this.name;
+        storedConnection = driver.createConnection(configName).datasource();
+        
+        // Verify valid property
+        DataSourceManager manager;        
+        List<String> properties;
         
         if(!this.extras.isEmpty())
         {
+            manager = new DataSourceManager(driver.getDataSource());
+            properties = Arrays.asList(manager.getProperties());
+            
             for(Map.Entry<String, String> entry : this.extras.entrySet())
-            {         
-                storedConnection.property(normalizeExtraOption(entry.getKey()), entry.getValue());           
+            {    
+                String key = normalizeExtraOption(entry.getKey());
+                
+                if(!properties.contains(key))
+                {
+                    Virge.exit(255, "Unknown datasource option for " + this.database + ": " + key);
+                    return;
+                }
+                
+                storedConnection.property(key, entry.getValue());           
             }  
             
             storedConnection.build().save(); 
-            System.out.println("Saved new Stored Connection");       
+            System.out.println("Saved new Stored Connection: " + configName);       
         }    
     }
     
     private void addConnection()
     {
-        String name;
-        
+        String configName;
+        String suffix = "";
         StoredConnection storedConnection;
         AutomaticDriver driver = AutomaticDrivers.getDriverByURL(this.url);
         
-        name = this.name == null ? driver.getName() + this.username : this.name;
+        if(this.username != null) suffix = this.username;
         
-        storedConnection = driver.createConnection(name)
+        configName = this.name == null ? driver.getName() + suffix : this.name;
+        
+        storedConnection = driver.createConnection(configName)
                 .driver()
                 .url(this.url)
                 .username(this.username)
@@ -204,7 +264,7 @@ public class RegisterStoredConnection implements Tool
        
         storedConnection.save();
         
-        System.out.println("Saved new Stored Connection");
+        System.out.println("Saved new Stored Connection: " + configName);
     }
     
     private String normalizeExtraOption(String option)
@@ -216,10 +276,11 @@ public class RegisterStoredConnection implements Tool
     
     /**
      * Validates that the stored connection can communicate with its relevant database.
-     * An exception will be thrown if the connection fails.
+     * 
      * @param storedConnection The connection to validate
+     * @throws ConvirganceException If the connection fails
      */
-    public void testStoredConnection(StoredConnection storedConnection)
+    public void testStoredConnection(StoredConnection storedConnection) throws ConvirganceException
     {
         storedConnection.execute(connection -> {
             if(connection == null || !connection.isValid(10)) throw new ConvirganceException("Unable to connect to database server");
