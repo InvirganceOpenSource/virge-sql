@@ -21,6 +21,7 @@ SOFTWARE.
  */
 package com.invirgance.virge.sql.connections;
 
+import com.invirgance.convirgance.ConvirganceException;
 import com.invirgance.convirgance.jdbc.AutomaticDriver;
 import com.invirgance.convirgance.jdbc.AutomaticDrivers;
 import com.invirgance.convirgance.jdbc.StoredConnection;
@@ -39,11 +40,14 @@ import java.util.Map;
  */
 public class RegisterStoredConnection implements Tool
 {
+    private boolean datasourceMode = false;
+    private boolean skipConnectionTest = false;
+    
     private String username;
     private String name;
     private String password = "";
     private String url;
-    
+
     private HashMap<String, String> extras = new HashMap<>();
     
     @Override
@@ -77,6 +81,12 @@ public class RegisterStoredConnection implements Tool
            HELP_SPACING + "--name [NAME]",
            HELP_SPACING + "-n [NAME]",
            HELP_SPACING + HELP_DESCRIPTION_SPACING + "Provide an optional name for the connection, by default the Driver Name and the Current User will be used.",         
+           "",
+           HELP_SPACING + "--type-datasource",
+           HELP_SPACING + HELP_DESCRIPTION_SPACING + "Toggle this flag to add the StoredConnection as a data source config.",         
+           "",
+           HELP_SPACING + "--skip-test",
+           HELP_SPACING + HELP_DESCRIPTION_SPACING + "Skips testing the Stored Connection.",         
            "",
            HELP_SPACING + "--help",
            HELP_SPACING + "-h",
@@ -114,17 +124,25 @@ public class RegisterStoredConnection implements Tool
                     this.url = args[++i];
                     break;
                     
+                case "--type-datasource":
+                    this.datasourceMode = true;
+                    break;
+                    
+                case "--skip-test":
+                    this.skipConnectionTest = true;
+                    break;
+                    
                 case "--help":
                 case "-h":
                     printToolHelp(this);    
                     break;
                     
                 default:
-//                    var current = args[i];
-//                    var optionValue = args[++i];
+                    var current = args[i];
+                    var optionValue = args[++i];
 //                    if(!optionValue.startsWith("--")) break;
-//                    extras.put(current, optionValue);
-                return false;    
+                    extras.put(current, optionValue);
+//                return false;    
             }
         }
         
@@ -137,55 +155,65 @@ public class RegisterStoredConnection implements Tool
     @Override
     public void execute() throws Exception
     {
-        addConnection();
+        if(this.datasourceMode) addDataSourceConfigConnection();
+        else addConnection();
+    }
+    private void addDataSourceConfigConnection()
+    {
+        String name;
+        StoredConnection.DataSourceConfig config;
+
+        StoredConnections.DataSourceConfigBuilder storedConnection;
+        AutomaticDriver driver = AutomaticDrivers.getDriverByURL(this.url);
+        
+        name = this.name == null ? driver.getName() + this.username : this.name;
+        
+        storedConnection = driver.createConnection(name)
+                .driver()
+                .url(this.url)
+                .username(this.username)
+                .password(this.password)
+                .done().datasource();
+        
+//        if(!this.skipConnectionTest) testStoredConnection(storedConnection);
+        
+        if(!this.extras.isEmpty())
+        {
+            config = storedConnection.build().getDataSourceConfig();
+
+            for(Map.Entry<String, String> entry : this.extras.entrySet())
+            {         
+                config.setProperty(normalizeExtraOption(entry.getKey()), entry.getValue());           
+            }
+            
+            storedConnection.done();
+            storedConnection.build().save();
+            
+        }
+        
+        System.out.println("Saved new Stored Connection");        
     }
     
     private void addConnection()
     {
         String name;
-        StoredConnection.DataSourceConfig config;
-
-        StoredConnection connection;
+        
+        StoredConnection storedConnection;
         AutomaticDriver driver = AutomaticDrivers.getDriverByURL(this.url);
         
         name = this.name == null ? driver.getName() + this.username : this.name;
         
-        if(StoredConnections.getConnection(name) != null)
-        {
-            System.err.println("Failed: A connection with the name "+ name +" already exists.");
-            return;
-        }
-        
-        connection = driver.createConnection(name)
+        storedConnection = driver.createConnection(name)
                 .driver()
                 .url(this.url)
                 .username(this.username)
                 .password(this.password)
                 .build();
         
-        if(connection.getConnection() == null)
-        {
-            // Note: should we test the connection? 
-            // Meh offer connection test command? seems superfluous
-            System.err.println("Warning: Connection test failed!");
-            System.out.println();
-        }
+        if(!this.skipConnectionTest) testStoredConnection(storedConnection);
+       
+        storedConnection.save();
         
-        connection.save();
-        
-        if(!this.extras.isEmpty())
-        {
-            config = connection.getDataSourceConfig();
-
-            for(Map.Entry<String, String> entry : this.extras.entrySet())
-            {         
-                config.setProperty(normalizeExtraOption(entry.getKey()), entry.getValue());           
-            }
-//            System.out.println(config.toString());
-//            java -jar virge.jar sql connection add -u postgres -c jdbc:postgresql://localhost:5432/testcustomers -n freeName1 --fromReference "yo" --portNumber 10101
-//            Kaboom!
-//            connection.save();
-        }
         System.out.println("Saved new Stored Connection");
     }
     
@@ -194,5 +222,17 @@ public class RegisterStoredConnection implements Tool
         if(option.startsWith("--")) return option.substring(2);
         
         return option;
+    }
+    
+    /**
+     * Validates that the stored connection can communicate with its relevant database.
+     * An exception will be thrown if the connection fails.
+     * @param storedConnection The connection to validate
+     */
+    public void testStoredConnection(StoredConnection storedConnection)
+    {
+        storedConnection.execute(connection -> {
+            if(connection == null || !connection.isValid(10)) throw new ConvirganceException("Unable to connect to database server");
+        });
     }
 }
