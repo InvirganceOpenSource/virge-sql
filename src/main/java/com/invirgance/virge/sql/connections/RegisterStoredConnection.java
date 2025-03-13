@@ -25,7 +25,7 @@ import com.invirgance.convirgance.ConvirganceException;
 import com.invirgance.convirgance.jdbc.AutomaticDriver;
 import com.invirgance.convirgance.jdbc.AutomaticDrivers;
 import com.invirgance.convirgance.jdbc.StoredConnection;
-import com.invirgance.convirgance.jdbc.StoredConnections;
+import com.invirgance.convirgance.jdbc.StoredConnections.DataSourceConfigBuilder;
 import com.invirgance.virge.Virge;
 import static com.invirgance.virge.Virge.HELP_DESCRIPTION_SPACING;
 import static com.invirgance.virge.Virge.HELP_SPACING;
@@ -140,15 +140,19 @@ public class RegisterStoredConnection implements Tool
                 default:
                     var current = args[i];
                     var optionValue = args[++i];
+//                    deal with bad args, show hint command
 //                    if(!optionValue.startsWith("--")) break;
                     extras.put(current, optionValue);
-//                return false;    
+
             }
         }
         
-        if(this.username == null) Virge.exit(255, "Failed: Stored Connection can not be created without a username");
-        if(this.url == null) Virge.exit(255, "Failed: The Stored Connection was not provided a url...");
-        
+        if(!this.datasourceMode)
+        {
+            if(this.username == null) Virge.exit(255, "Failed: Stored Connection can not be created without a username");
+            if(this.url == null) Virge.exit(255, "Failed: The Stored Connection was not provided a url...");
+        }
+
         return true;
     }
 
@@ -158,40 +162,26 @@ public class RegisterStoredConnection implements Tool
         if(this.datasourceMode) addDataSourceConfigConnection();
         else addConnection();
     }
+    
     private void addDataSourceConfigConnection()
     {
-        String name;
-        StoredConnection.DataSourceConfig config;
-
-        StoredConnections.DataSourceConfigBuilder storedConnection;
+        DataSourceConfigBuilder storedConnection;
         AutomaticDriver driver = AutomaticDrivers.getDriverByURL(this.url);
         
         name = this.name == null ? driver.getName() + this.username : this.name;
-        
-        storedConnection = driver.createConnection(name)
-                .driver()
-                .url(this.url)
-                .username(this.username)
-                .password(this.password)
-                .done().datasource();
-        
-//        if(!this.skipConnectionTest) testStoredConnection(storedConnection);
+
+        storedConnection = driver.createConnection(name).datasource();
         
         if(!this.extras.isEmpty())
         {
-            config = storedConnection.build().getDataSourceConfig();
-
             for(Map.Entry<String, String> entry : this.extras.entrySet())
             {         
-                config.setProperty(normalizeExtraOption(entry.getKey()), entry.getValue());           
-            }
+                storedConnection.property(normalizeExtraOption(entry.getKey()), entry.getValue());           
+            }  
             
-            storedConnection.done();
-            storedConnection.build().save();
-            
-        }
-        
-        System.out.println("Saved new Stored Connection");        
+            storedConnection.build().save(); 
+            System.out.println("Saved new Stored Connection");       
+        }    
     }
     
     private void addConnection()
