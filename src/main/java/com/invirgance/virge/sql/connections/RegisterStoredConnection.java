@@ -31,6 +31,7 @@ import static com.invirgance.virge.Virge.HELP_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
 import com.invirgance.virge.tool.Tool;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -119,10 +120,10 @@ public class RegisterStoredConnection implements Tool
                     break;
                     
                 default:
-//                    System.out.println(args[i]);
-//                    System.out.println(args[i++]);
-//                    if(!args[i].contains("--")) return false;
-//                    extras.put(args[i], args[++i]);
+//                    var current = args[i];
+//                    var optionValue = args[++i];
+//                    if(!optionValue.startsWith("--")) break;
+//                    extras.put(current, optionValue);
                 return false;    
             }
         }
@@ -174,29 +175,24 @@ public class RegisterStoredConnection implements Tool
         
         if(!this.extras.isEmpty())
         {
-//            config = connection.getDataSourceConfig();
-//
-//            for(Map.Entry<String, String> entry : this.extras.entrySet())
-//            {
-//                String value = entry.getValue();
-//                String oldKey = entry.getKey()+"";
-//                String property = normalizeExtraOption(oldKey);
-//                
-//                System.out.println("");
-//                System.out.println("PROPERTY");
-//                System.out.println(property);
-//                System.out.println(value);
-//                System.out.println("VALUE");
-//                System.out.println("");
-//                config.setProperty(property, value);
-//                
-//            }
+            config = connection.getDataSourceConfig();
+
+            for(Map.Entry<String, String> entry : this.extras.entrySet())
+            {         
+                config.setProperty(normalizeExtraOption(entry.getKey()), entry.getValue());           
+            }
+//            System.out.println(config.toString());
+//            java -jar virge.jar sql connection add -u postgres -c jdbc:postgresql://localhost:5432/testcustomers -n freeName1 --fromReference "yo" --portNumber 10101
+//            Kaboom!
+//            connection.save();
         }
         System.out.println("Saved new Stored Connection");
     }
     
     private String normalizeExtraOption(String option)
     {
-        return option.substring(2);
+        if(option.startsWith("--")) return option.substring(2);
+        
+        return option;
     }
 }
