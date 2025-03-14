@@ -117,7 +117,8 @@ public class ListDataSource implements Tool
             driver = drivers.next();
 
             manager = new DataSourceManager(driver.getDataSource());
-            System.out.println(HELP_SPACING + driver.getDataSource().getClass().getName());
+            
+            System.out.println(HELP_SPACING + manager.getDataSource().getClass().getName());
         }
     }
     

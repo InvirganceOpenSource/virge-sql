@@ -208,12 +208,12 @@ public class RegisterStoredConnection implements Tool
     private void addDataSourceConfigConnection()
     {
         String configName;        
-        DataSourceConfigBuilder storedConnection;
+        DataSourceConfigBuilder config;
         
         AutomaticDriver driver = AutomaticDrivers.getDriverByName(this.database);
         
         configName = this.name == null ? driver.getName() : this.name;
-        storedConnection = driver.createConnection(configName).datasource();
+        config = driver.createConnection(configName).datasource();
         
         // Verify valid property
         DataSourceManager manager;        
@@ -234,10 +234,10 @@ public class RegisterStoredConnection implements Tool
                     return;
                 }
                 
-                storedConnection.property(key, entry.getValue());           
+                config.property(key, entry.getValue());           
             }  
             
-            storedConnection.build().save(); 
+            config.build().save(); 
             System.out.println("Saved new Stored Connection: " + configName);       
         }    
     }
