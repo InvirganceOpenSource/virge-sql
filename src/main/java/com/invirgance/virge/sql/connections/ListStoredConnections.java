@@ -1,0 +1,122 @@
+/*
+ * Copyright 2024 INVIRGANCE LLC
+
+Permission is hereby granted, free of charge, to any person obtaining a copy 
+of this software and associated documentation files (the “Software”), to deal 
+in the Software without restriction, including without limitation the rights to 
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
+of the Software, and to permit persons to whom the Software is furnished to do 
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all 
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+SOFTWARE.
+ */
+package com.invirgance.virge.sql.connections;
+
+import com.invirgance.convirgance.jdbc.StoredConnection;
+import com.invirgance.convirgance.jdbc.StoredConnections;
+import static com.invirgance.virge.Virge.HELP_DESCRIPTION_SPACING;
+import static com.invirgance.virge.Virge.HELP_SPACING;
+import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
+import com.invirgance.virge.tool.Tool;
+import java.util.Iterator;
+
+/**
+ * 
+ * @author tadghh
+ */
+public class ListStoredConnections implements Tool
+{
+    private String name;
+    
+    @Override
+    public String getName()
+    {
+        return "list";
+    }
+    
+    @Override
+    public String getShortDescription()
+    {
+        return "List all current connection names and drivers.";
+    }
+    
+    @Override
+    public String[] getHelp()
+    {
+        return new String[]{
+           HELP_SPACING + "default*",
+           HELP_SPACING + HELP_DESCRIPTION_SPACING + "List all current connection names and drivers.",         
+           "",
+           HELP_SPACING + "--name <NAME>",
+           HELP_SPACING + "-n <NAME>",
+           HELP_SPACING + HELP_DESCRIPTION_SPACING + "The name of the connection to view.",         
+           "",
+           HELP_SPACING + "--help",
+           HELP_SPACING + "-h",
+           HELP_SPACING + HELP_DESCRIPTION_SPACING + "Display this menu.",         
+        };    
+    }
+
+    @Override
+    public boolean parse(String[] args, int start) throws Exception
+    {
+        for(int i=start; i<args.length; i++)
+        {
+            switch(args[i])
+            {
+                case "--name":
+                case "-n":
+                    this.name = args[++i];
+                    break;
+                    
+                case "--help":
+                case "-h":
+                    printToolHelp(this);    
+                    break;
+                    
+                default:
+                    return false;    
+            }
+        }
+        
+        return true;
+    }
+
+    @Override
+    public void execute() throws Exception
+    {
+        if(this.name != null) getInfo();
+        else listAll();
+    }
+    
+    private void listAll()
+    {
+        Iterator<StoredConnection> connections = StoredConnections.list().iterator();
+        StoredConnection connection;
+        
+        System.out.println("Name | Driver");
+        
+        while(connections.hasNext())
+        {
+            connection = connections.next();
+            System.out.println(connection.getName() + " - " + connection.getDriver().getName());
+        }    
+    }
+    
+    private void getInfo()
+    {
+        StoredConnection driver = StoredConnections.getConnection(this.name);
+        
+        System.out.println("Config: " + driver.getName());
+        System.out.println(driver.toString());
+    }
+}

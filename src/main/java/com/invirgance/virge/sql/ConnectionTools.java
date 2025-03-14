@@ -24,6 +24,7 @@ package com.invirgance.virge.sql;
 
 import static com.invirgance.virge.Virge.HELP_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
+import com.invirgance.virge.sql.connections.ListStoredConnections;
 import com.invirgance.virge.sql.connections.RegisterStoredConnection;
 import com.invirgance.virge.sql.connections.UnregisterStoredConnection;
 import com.invirgance.virge.tool.Tool;
@@ -37,7 +38,8 @@ public class ConnectionTools implements Tool
 {
     private static final Tool[] TOOLS = new Tool[]{
         new RegisterStoredConnection(),
-        new UnregisterStoredConnection()
+        new UnregisterStoredConnection(),
+        new ListStoredConnections()
     };
 
     private Tool tool;
