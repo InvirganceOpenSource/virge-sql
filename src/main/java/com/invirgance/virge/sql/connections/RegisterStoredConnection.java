@@ -185,9 +185,12 @@ public class RegisterStoredConnection implements Tool
             }
         }
         
-        if(this.datasourceMode && this.database == null)
+        if(this.datasourceMode)
         {
-            Virge.exit(255, "Failed: Attempted to create a stored connection without a selected database...");
+            if(this.database == null)
+            {
+                Virge.exit(255, "Failed: Attempted to create a stored connection without a selected database...");
+            }
         }
         else
         {
@@ -208,12 +211,12 @@ public class RegisterStoredConnection implements Tool
     private void addDataSourceConfigConnection()
     {
         String configName;        
-        DataSourceConfigBuilder config;
+        DataSourceConfigBuilder storedConnection;
         
         AutomaticDriver driver = AutomaticDrivers.getDriverByName(this.database);
         
         configName = this.name == null ? driver.getName() : this.name;
-        config = driver.createConnection(configName).datasource();
+        storedConnection = driver.createConnection(configName).datasource();
         
         // Verify valid property
         DataSourceManager manager;        
@@ -234,10 +237,10 @@ public class RegisterStoredConnection implements Tool
                     return;
                 }
                 
-                config.property(key, entry.getValue());           
+                storedConnection.property(key, entry.getValue());           
             }  
             
-            config.build().save(); 
+            storedConnection.build().save(); 
             System.out.println("Saved new Stored Connection: " + configName);       
         }    
     }
