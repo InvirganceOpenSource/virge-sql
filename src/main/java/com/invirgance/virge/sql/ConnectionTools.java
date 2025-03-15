@@ -81,20 +81,12 @@ public class ConnectionTools implements Tool
             {
                 this.tool = tool;
                 
-                if(!this.tool.parse(args, start + 1))
-                {                    
-                    //if(args.length != start+1) System.err.println("\nUnknown option: " + args[start + 1]);
-                    
-                    printToolHelp(this.tool);
-                }
-                else
-                {
-                    return true;
-                }
+                if(!this.tool.parse(args, start + 1)) printToolHelp(this.tool);               
+                else return true;
             }  
         }
         
-        System.err.println("\nUnknown command: " + args[start]);
+        System.err.println("\nUnknown tool: " + args[start]);
              
         return false;
     }
