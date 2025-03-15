@@ -24,11 +24,14 @@ package com.invirgance.virge.sql.drivers;
 
 import com.invirgance.convirgance.jdbc.AutomaticDriver;
 import com.invirgance.convirgance.jdbc.AutomaticDrivers;
+import com.invirgance.virge.sql.ConsoleOutputFormatter;
 import com.invirgance.virge.Virge;
 import static com.invirgance.virge.Virge.HELP_DESCRIPTION_SPACING;
 import static com.invirgance.virge.Virge.HELP_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
 import com.invirgance.virge.tool.Tool;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Lists the registered database drivers.
@@ -139,51 +142,24 @@ public class ListDriver implements Tool
      */
     public void printAll()
     {
-        AutomaticDrivers drivers = new AutomaticDrivers();
-        
-        int[] widths = new int[]{ 14, 8 };
-        
         String example;
         
+        List<String> names = new ArrayList<>();
+        List<String> examples = new ArrayList<>();
+        
+        AutomaticDrivers drivers = new AutomaticDrivers();
+        
         for(AutomaticDriver descriptor : drivers)
         {
             example = !(descriptor.getExamples().length == 0) ? descriptor.getExamples()[0] : "";
             
-            if(widths[0] < descriptor.getName().length()) widths[0] = descriptor.getName().length();
-            if(widths[1] < example.length()) widths[1] = example.length();
+            examples.add(example);
+            names.add(descriptor.getName());
         }
         
-        System.out.print(formatWidth("Database Name", widths[0]));
-        System.out.print("  ");
-        System.out.println(formatWidth("Connection String Example", widths[1]));
-        
-        System.out.print(drawWidth('=', widths[0]));
-        System.out.print("  ");
-        System.out.println(drawWidth('=', widths[1]));
-            
-        for(AutomaticDriver descriptor : drivers)
-        {
-            example = !(descriptor.getExamples().length == 0) ? descriptor.getExamples()[0] : "";
-            
-            System.out.print(formatWidth(descriptor.getName(), widths[0]));
-            System.out.print("  ");
-            System.out.println(formatWidth(example, widths[1]));
-        }
-    }
-    
-    private String formatWidth(String value, int width)
-    {
-        while(value.length() < width) value += " ";
-        
-        return value;
-    }
-    
-    private String drawWidth(char c, int width)
-    {
-        StringBuffer buffer = new StringBuffer();
-        
-        while(buffer.length() < width) buffer.append(c);
-        
-        return buffer.toString();
+        new ConsoleOutputFormatter()
+                .addColumn("Database Name", names)
+                .addColumn("Connection String Example", examples)
+                .print();
     }
 }

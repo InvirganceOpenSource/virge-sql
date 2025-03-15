@@ -25,11 +25,14 @@ package com.invirgance.virge.sql.datasource;
 import com.invirgance.convirgance.jdbc.AutomaticDriver;
 import com.invirgance.convirgance.jdbc.AutomaticDrivers;
 import com.invirgance.convirgance.jdbc.datasource.DataSourceManager;
+import com.invirgance.virge.sql.ConsoleOutputFormatter;
 import static com.invirgance.virge.Virge.HELP_DESCRIPTION_SPACING;
 import static com.invirgance.virge.Virge.HELP_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
 import com.invirgance.virge.tool.Tool;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Displays information about DataSource properties.
@@ -105,29 +108,33 @@ public class ListDataSource implements Tool
  
     private void displayDataSources()
     {
-        DataSourceManager manager;
-        Iterator<AutomaticDriver> drivers;
         AutomaticDriver driver;
-        drivers = new AutomaticDrivers().iterator();
+        Iterator<AutomaticDriver> drivers = new AutomaticDrivers().iterator();
 
-        System.out.println("Data Sources:");
-        
+        List<String> names = new ArrayList<>();
+        List<String> canonical = new ArrayList<>();
+
         while(drivers.hasNext()) 
         {
             driver = drivers.next();
 
-            manager = new DataSourceManager(driver.getDataSource());
-            
-            System.out.println(HELP_SPACING + manager.getDataSource().getClass().getName());
+            names.add(driver.getName());
+            canonical.add(driver.getDataSource().getClass().getCanonicalName());
         }
+        
+        new ConsoleOutputFormatter()
+                .addColumn("Name", names)
+                .addColumn("DataSource", canonical)
+                .print();
     }
     
     private void printDataSourceProperties()
     {
+        String simple;
+        AutomaticDriver driver;
+
         DataSourceManager manager;
         Iterator<AutomaticDriver> drivers = new AutomaticDrivers().iterator();
-        AutomaticDriver driver;
-        String simple;
         
         while(drivers.hasNext()) 
         {

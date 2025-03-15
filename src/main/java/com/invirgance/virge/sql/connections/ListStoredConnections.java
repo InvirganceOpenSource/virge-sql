@@ -25,9 +25,12 @@ import com.invirgance.convirgance.jdbc.StoredConnection;
 import com.invirgance.convirgance.jdbc.StoredConnections;
 import static com.invirgance.virge.Virge.HELP_DESCRIPTION_SPACING;
 import static com.invirgance.virge.Virge.HELP_SPACING;
+import com.invirgance.virge.sql.ConsoleOutputFormatter;
 import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
 import com.invirgance.virge.tool.Tool;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * 
@@ -98,25 +101,39 @@ public class ListStoredConnections implements Tool
         else listAll();
     }
     
-    private void listAll()
-    {
-        Iterator<StoredConnection> connections = StoredConnections.list().iterator();
-        StoredConnection connection;
-        
-        System.out.println("Name | Driver");
-        
-        while(connections.hasNext())
-        {
-            connection = connections.next();
-            System.out.println(connection.getName() + " - " + connection.getDriver().getName());
-        }    
-    }
-    
     private void getInfo()
     {
         StoredConnection driver = StoredConnections.getConnection(this.name);
         
         System.out.println("Config: " + driver.getName());
         System.out.println(driver.toString());
+    }
+    
+    /**
+     * Prints out high level information for the registered drivers.
+     */
+    public void listAll()
+    {
+        Iterator<StoredConnection> connections = StoredConnections.list().iterator();
+        StoredConnection connection;
+        
+        List<String> names = new ArrayList<>();
+        List<String> drivers = new ArrayList<>();
+        List<String> datasources = new ArrayList<>();
+
+        while(connections.hasNext()) 
+        {
+            connection = connections.next();
+            
+            names.add(connection.getName());
+            drivers.add(connection.getDriver().getName());
+            datasources.add(connection.getDataSource().getClass().getCanonicalName());
+        }
+        
+        new ConsoleOutputFormatter()
+                .addColumn("Connection Name", names)
+                .addColumn("Driver", drivers)
+                .addColumn("DataSource", datasources)
+                .print();
     }
 }
