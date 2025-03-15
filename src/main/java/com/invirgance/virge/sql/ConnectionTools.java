@@ -73,7 +73,7 @@ public class ConnectionTools implements Tool
     public boolean parse(String[] args, int start) throws Exception
     { 
         if(start == args.length) return false;
-        if("-h".equals(args[start]) || "--help".equals(args[start])) return false;
+        else if("-h".equals(args[start]) || "--help".equals(args[start])) return false;
 
         for(Tool tool : TOOLS)
         { 
@@ -86,7 +86,7 @@ public class ConnectionTools implements Tool
             }  
         }
         
-        System.err.println("\nUnknown tool: " + args[start]);
+        System.err.println("\nUnknown command: " + args[start]);
              
         return false;
     }
