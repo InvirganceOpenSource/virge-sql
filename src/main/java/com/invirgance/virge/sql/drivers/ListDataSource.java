@@ -20,14 +20,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.invirgance.virge.sql.datasource;
+package com.invirgance.virge.sql.drivers;
 
 import com.invirgance.convirgance.jdbc.AutomaticDriver;
 import com.invirgance.convirgance.jdbc.AutomaticDrivers;
 import com.invirgance.convirgance.jdbc.datasource.DataSourceManager;
-import com.invirgance.virge.sql.ConsoleOutputFormatter;
 import static com.invirgance.virge.Virge.HELP_DESCRIPTION_SPACING;
 import static com.invirgance.virge.Virge.HELP_SPACING;
+import com.invirgance.virge.sql.ConsoleOutputFormatter;
 import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
 import com.invirgance.virge.tool.Tool;
 import java.util.ArrayList;
@@ -123,18 +123,19 @@ public class ListDataSource implements Tool
         }
         
         new ConsoleOutputFormatter()
-                .addColumn("Name", names)
-                .addColumn("DataSource", canonical)
+                .addColumn("Driver Name", names)
+                .addColumn("Data Source", canonical)
                 .print();
     }
     
     private void printDataSourceProperties()
     {
-        String simple;
         AutomaticDriver driver;
+        
+        String simple;
 
-        DataSourceManager manager;
         Iterator<AutomaticDriver> drivers = new AutomaticDrivers().iterator();
+        DataSourceManager manager;
         
         while(drivers.hasNext()) 
         {
@@ -146,7 +147,6 @@ public class ListDataSource implements Tool
                 manager = new DataSourceManager(driver.getDataSource());
                 
                 System.out.println(driver.getName() + " (" + driver.getDataSource().getClass().getName() + ")");
-                System.out.println();
                 System.out.println(HELP_SPACING + "Properties:");
                 
                 for(String properties : manager.getProperties()) 
