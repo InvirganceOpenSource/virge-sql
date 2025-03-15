@@ -83,7 +83,9 @@ public class UnregisterStoredConnection implements Tool
                     break;
                     
                 default:
-                return false;    
+                    System.err.println("\nUnknown option: " + args[i]);
+                    
+                    return false;    
             }
         }
         

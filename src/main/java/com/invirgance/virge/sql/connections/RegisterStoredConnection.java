@@ -151,37 +151,10 @@ public class RegisterStoredConnection implements Tool
                     break;
                     
                 default:
-                    int index = i;
-
-                    if(index != args.length && this.datasourceMode)
-                    {
-                        var option = args[i];
-                        String value;
                     
-                        if(!option.startsWith("--")) 
-                        {
-                            System.err.println("Unknown option: " + option);
-                            
-                            return false;
-                        }
-                        
-                        if(index + 1 < args.length)
-                        {
-                            value = args[++i];
-                            extras.put(option, value);
-                        }
-                        else
-                        {
-                            System.err.println("Missing value for: " + option);
-                            return false;
-                        }   
-                    }
-                    else
-                    {   
-                        System.err.println("Unknown option: " + args[i]);
-                        System.out.println("Hint: Are you trying to configure a datasource? add --type-datasource");
-                        return false;
-                    }
+                    if(!checkOptionFallThrough(args, i)) return false; 
+                    
+                    ++i;
             }
         }
         
@@ -200,7 +173,39 @@ public class RegisterStoredConnection implements Tool
 
         return true;
     }
+    private boolean checkOptionFallThrough(String[] args, int index)
+    {
+        if(index != args.length && this.datasourceMode)
+        {
+            var option = args[index];
+            String value;
 
+            if(!option.startsWith("--")) 
+            {
+                System.err.println("Unknown option: " + option);
+
+                return false;
+            }
+
+            if(index + 1 < args.length)
+            {
+                value = args[++index];
+                extras.put(option, value);
+            }
+            else
+            {
+                System.err.println("Missing value for: " + option);
+                return false;
+            }   
+        }
+        else
+        {   
+            System.err.println("Unknown option: " + args[index]);
+            System.out.println("Hint: Are you trying to configure a datasource? add --type-datasource");
+            return false;
+        }
+        return true;
+    }
     @Override
     public void execute() throws Exception
     {
