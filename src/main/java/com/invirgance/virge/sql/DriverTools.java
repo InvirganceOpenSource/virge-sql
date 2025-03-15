@@ -24,7 +24,7 @@ package com.invirgance.virge.sql;
 
 import static com.invirgance.virge.Virge.HELP_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
-import com.invirgance.virge.sql.datasource.ListDataSource;
+import com.invirgance.virge.sql.drivers.ListDataSource;
 import com.invirgance.virge.sql.drivers.ListDriver;
 import com.invirgance.virge.sql.drivers.RegisterDriver;
 import com.invirgance.virge.sql.drivers.UnregisterDriver;
@@ -32,17 +32,16 @@ import com.invirgance.virge.tool.Tool;
 import java.util.ArrayList;
 
 /**
- * Contains the sub commands for registering/unregistering drivers SQL Databases.
+ * Contains sub commands for configuring and viewing information about the SQL drivers.
  * 
  * @author tadghh
  */
 public class DriverTools implements Tool
 {
-    
     private static final Tool[] TOOLS = new Tool[]{
-        new ListDriver(),
         new RegisterDriver(),
-        new UnregisterDriver(),
+        new UnregisterDriver(),        
+        new ListDriver(),
         new ListDataSource()
     };
      
@@ -53,7 +52,6 @@ public class DriverTools implements Tool
     {
         return "drivers";
     }
-    
     
     @Override
     public String[] getHelp()
