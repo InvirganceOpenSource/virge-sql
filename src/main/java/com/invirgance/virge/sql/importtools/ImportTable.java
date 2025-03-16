@@ -78,26 +78,6 @@ public class ImportTable implements Tool
     private String jdbcURL;
     private String username;
     private String password;
-
-    public Source getSource()
-    {
-        return source;
-    }
-
-    public void setSource(Source source)
-    {
-        this.source = source;
-    }
-
-    public Input<JSONObject> getInput()
-    {
-        return input;
-    }
-
-    public void setInput(Input<JSONObject> input)
-    {
-        this.input = input;
-    }
     
     private boolean isURL(String path)
     {
@@ -335,6 +315,7 @@ public class ImportTable implements Tool
                     }
                     else if(jdbcURL == null)
                     {
+                        // TODO: use automatic drivers.getDriverByUrl
                         jdbcURL = args[i];
                     }
                     else
@@ -349,6 +330,7 @@ public class ImportTable implements Tool
         if(input == null) return error("No input type specified and unable to autodetect");
         if(jdbcURL == null) return error("JDBC URL not specified!");
         
+        System.out.println("Import completed");
         return true;
     }
     
