@@ -29,23 +29,23 @@ import com.invirgance.virge.tool.Tool;
 import java.util.ArrayList;
 
 /**
- *
+ * Tools that generate SQL from existing data.
+ * 
  * @author tadghh
  */
 public class GenerationTools implements Tool
 {
+    private Tool tool;
+    
     private static final Tool[] TOOLS = new Tool[]{
         new GenerateTable(),
     };
-     
-    private Tool tool;
-    
+      
     @Override
     public String getName()
     {
         return "generate";
-    }
-    
+    }   
     
     @Override
     public String[] getHelp()
@@ -57,7 +57,7 @@ public class GenerationTools implements Tool
             help.add(HELP_SPACING + tool.getName() + " - " + tool.getShortDescription());
         }
         
-        return help.toArray(new String[0]);
+        return help.toArray(new String[help.size()]);
     }
     
     @Override
@@ -70,7 +70,7 @@ public class GenerationTools implements Tool
     public boolean parse(String[] args, int start) throws Exception
     { 
         if(start == args.length) return false;
-        if("-h".equals(args[start]) || "--help".equals(args[start])) return false;
+        else if("-h".equals(args[start]) || "--help".equals(args[start])) return false;
 
         for(Tool tool : TOOLS)
         { 
@@ -101,13 +101,5 @@ public class GenerationTools implements Tool
     {
         tool.execute();
     }
-        
-    /**
-     * Gets the tools of this tool (sub-commands).
-     * @return The tools (sub-commands).
-     */
-    public Tool[] getTools()
-    {
-        return TOOLS;
-    }
+    
 }
