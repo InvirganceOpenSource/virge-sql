@@ -24,10 +24,10 @@ package com.invirgance.virge.sql.drivers;
 
 import com.invirgance.convirgance.jdbc.AutomaticDriver;
 import com.invirgance.convirgance.jdbc.AutomaticDrivers;
-import com.invirgance.virge.sql.ConsoleOutputFormatter;
 import com.invirgance.virge.Virge;
 import static com.invirgance.virge.Virge.HELP_DESCRIPTION_SPACING;
 import static com.invirgance.virge.Virge.HELP_SPACING;
+import com.invirgance.virge.sql.ConsoleOutputFormatter;
 import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
 import com.invirgance.virge.tool.Tool;
 import java.util.ArrayList;
@@ -89,6 +89,7 @@ public class ListDriver implements Tool
                     break;
                     
                 default:
+                    System.err.println("Unknown option: " + args[i]);
                     return false;
             }
         }

@@ -136,6 +136,7 @@ public class RegisterDriver implements Tool
                     break;   
                     
                 default:
+                    System.err.println("Unknown option: " + args[i]);
                     return false;
             }
         }
