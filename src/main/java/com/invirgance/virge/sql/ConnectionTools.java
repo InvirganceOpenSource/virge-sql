@@ -36,13 +36,13 @@ import java.util.ArrayList;
  */
 public class ConnectionTools implements Tool
 {
+    private Tool tool;
+    
     private static final Tool[] TOOLS = new Tool[]{
         new RegisterStoredConnection(),
         new UnregisterStoredConnection(),
         new ListStoredConnections()
     };
-
-    private Tool tool;
 
     @Override
     public String getName()
@@ -53,7 +53,7 @@ public class ConnectionTools implements Tool
     @Override
     public String getShortDescription()
     {
-        return "Configure StoredConnections and DataSources.";
+        return "Add/Remove StoredConnections and configure DataSources.";
     }
     
     @Override
@@ -66,7 +66,7 @@ public class ConnectionTools implements Tool
             help.add(HELP_SPACING + tool.getName() + " - " + tool.getShortDescription());
         }
         
-        return help.toArray(new String[0]);
+        return help.toArray(new String[help.size()]);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class ConnectionTools implements Tool
     { 
         if(start == args.length) return false;
         else if("-h".equals(args[start]) || "--help".equals(args[start])) return false;
-
+        
         for(Tool tool : TOOLS)
         { 
             if(tool.getName().equals(args[start]))
@@ -91,11 +91,9 @@ public class ConnectionTools implements Tool
         return false;
     }
 
-
     @Override
     public void execute() throws Exception
     {
         tool.execute();
-    }
-    
+    }   
 }
