@@ -72,34 +72,35 @@ public class VirgeSQL
      * 
      * If this module is called without any tool, than the help for this specific module is printed
      * 
-     * @param selected the selected sub command or null for top level commands
+     * @param subTool the selected sub command or null for top level commands
      */
-    public static void printToolHelp(Tool selected)
+    public static void printToolHelp(Tool subTool)
     {
         // TODO look at adding sub tools to Tool
-        Boolean level = SELECTED != null && selected != null && !SELECTED.getName().equals(selected.getName()) || SELECTED != null && selected == null;
+        // If level is true we are using a top level tool (SELECTED) other wise we are using a sub tool (selected)
+        Boolean level = SELECTED != null && subTool != null && !SELECTED.getName().equals(subTool.getName()) || SELECTED != null && subTool == null;
         
         String top = level ? SELECTED.getName() : "";
-        String sub = selected != null ? selected.getName() : "";
+        String sub = subTool != null ? subTool.getName() : "";
           
-        // Tools without commands
-        if(selected != null)
+        // Tools with no sub tool
+        if(subTool != null)
         {
             System.out.println();
             System.out.println("Usage: virge.jar sql " + top + " " + sub + " <OPTIONS>");
             System.out.println();
-            System.out.println(selected.getShortDescription());
+            System.out.println(subTool.getShortDescription());
             System.out.println();
             System.out.println("Options:");
             System.out.println();
             
-            print(selected.getHelp(), System.out);
+            print(subTool.getHelp(), System.out);
         }
         else if(SELECTED != null)
         {
             // Top level tools
             System.out.println();
-            System.out.println("Usage: virge.jar sql " + top + sub + " <COMMAND>");
+            System.out.println("Usage: virge.jar sql " + top + sub + " <[TOOL|OPTION]>");
             System.out.println();
             System.out.println(SELECTED.getShortDescription());
             System.out.println();            
@@ -109,7 +110,7 @@ public class VirgeSQL
             System.out.println(HELP_SPACING + "-h");
             System.out.println(HELP_SPACING + HELP_DESCRIPTION_SPACING + "View a tools options.");
             System.out.println();
-            System.out.println("Commands:");
+            System.out.println("Tools:");
             System.out.println();
             
             print(SELECTED.getHelp(), System.out); 
@@ -137,7 +138,7 @@ public class VirgeSQL
     }
     
     /**
-     * Runs the tool, the top level should be trimmed by this point (virge.jar sql drivers) where sql is trimmed.
+     * Runs the tool, the top level command should be trimmed by this point (virge.jar sql drivers) where 'sql' is trimmed.
      * 
      * @param args The command and options to execute.
      * @throws Exception Exceptions raised by tools. 
@@ -155,7 +156,7 @@ public class VirgeSQL
 
         if(SELECTED == null) 
         {
-            System.err.println("\nUnknown Command: " + args[0]);
+            System.err.println("\nUnknown Tool: " + args[0]);
             
             printToolHelp(null);
         }

@@ -28,7 +28,7 @@ import com.invirgance.virge.tool.Tool;
 import java.util.ArrayList;
 
 /**
- *
+ * Allows importing external data from 'X' format into a Database
  * @author tadghh
  */
 public class ImportTools implements Tool
@@ -81,7 +81,7 @@ public class ImportTools implements Tool
             }  
         }
         
-        System.err.println("\nUnknown command: " + args[start]);
+        System.err.println("\nUnknown Tool: " + args[start]);
              
         return false;
     }

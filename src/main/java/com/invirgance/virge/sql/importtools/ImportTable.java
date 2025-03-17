@@ -256,6 +256,7 @@ public class ImportTable implements Tool
                 case "--help":
                 case "-h":
                     printToolHelp(this);
+                    
                     return true;
                 
                 case "--source-delimiter":
@@ -322,22 +323,16 @@ public class ImportTable implements Tool
                     
                 default:
                     
-                    if(source == null && (args[i].equals("-") || args[i].contains(".")))
+                    if(checkUnnamedOptions(args[i])) 
                     {
-                        source = getSource(args[i]);
-                    
-                        if(input == null) input = detectInput(args[i]);
-
                         break;
-                    }
-                    else if(jdbcURL == null)
-                    {
-                        // TODO: use automatic drivers.getDriverByUrl
-                        jdbcURL = args[i];
                     }
                     else
                     {
-                        exit(255, "Unknown parameter: " + args[i]);
+                        System.err.println("Unknown parameter: " + args[i]);
+                        printToolHelp(this);
+                        
+                        return false;
                     }
             }
         }
@@ -370,6 +365,28 @@ public class ImportTable implements Tool
         }
         
         return true;
+    }
+    
+    // Below is an example of a command with un-named options, specifically the file path and database url. Users.json could also be pipe input like '-'
+    // virge.jar sql import load --connection-name testName ./users.json "jdbc:postgresql://localhost:5432/testcustomers" -n customers -a
+    private boolean checkUnnamedOptions(String option) throws MalformedURLException, IOException
+    {
+        if(source == null && (option.equals("-") || option.contains(".")))
+        {
+            source = getSource(option);
+
+            if(input == null) input = detectInput(option);
+
+            return true;
+        }
+        else if(jdbcURL == null && AutomaticDrivers.getDriverByURL(option) != null)
+        {
+            jdbcURL = option;
+            
+            return true;
+        }
+        
+        return false;
     }
     
     private String normalizeObjectName(String name)
