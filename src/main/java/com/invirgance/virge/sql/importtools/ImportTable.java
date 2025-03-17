@@ -35,7 +35,10 @@ import com.invirgance.convirgance.input.Input;
 import com.invirgance.convirgance.input.InputCursor;
 import com.invirgance.convirgance.input.JBINInput;
 import com.invirgance.convirgance.input.JSONInput;
-import com.invirgance.convirgance.jdbc.datasource.DriverDataSource;
+import com.invirgance.convirgance.jdbc.AutomaticDrivers;
+import com.invirgance.convirgance.jdbc.StoredConnection;
+import com.invirgance.convirgance.jdbc.StoredConnections;
+import com.invirgance.convirgance.jdbc.schema.Table;
 import com.invirgance.convirgance.json.JSONObject;
 import com.invirgance.convirgance.source.FileSource;
 import com.invirgance.convirgance.source.InputStreamSource;
@@ -53,12 +56,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.sql.DataSource;
 
 /**
  *
@@ -78,6 +78,9 @@ public class ImportTable implements Tool
     private String jdbcURL;
     private String username;
     private String password;
+    
+    private StoredConnection connection;
+    private String connectionName;
     
     private boolean isURL(String path)
     {
@@ -196,7 +199,7 @@ public class ImportTable implements Tool
             "",
             HELP_SPACING + "--name [NAME]",
             HELP_SPACING + "-n [NAME]",
-            HELP_SPACING + HELP_DESCRIPTION_SPACING + "Specifies the table to load. By default the input filename is used as the table name.",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "Specifies the name of the table to import into, will default to the filename of the input file.",
             "",
             HELP_SPACING + "--create",
             HELP_SPACING + "-c",
@@ -204,6 +207,19 @@ public class ImportTable implements Tool
             "",
             HELP_SPACING + "--truncate",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "Truncate the table prior to loading. All existing DATA will be LOST!",
+            "",           
+            HELP_SPACING + "--help",
+            HELP_SPACING + "-h",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING  + "Display this menu.",                 
+            "",
+            "Connection Options: ",
+            "",
+            HELP_SPACING + "Stored Connection:",
+            "",
+            HELP_SPACING + "--connection-name <STORED_CONNECTION>",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "The name of the stored connection to use.",
+            "",
+            HELP_SPACING + "Manual:",
             "",
             HELP_SPACING + "--username <USERNAME>",
             HELP_SPACING + "-u <USERNAME>",
@@ -216,10 +232,7 @@ public class ImportTable implements Tool
             HELP_SPACING + "--jdbc-url <URL>",
             HELP_SPACING + "-j <URL>",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "Alternate method of specifying the JDBC connection url ",
-            "",           
-            HELP_SPACING + "--help",
-            HELP_SPACING + "-h",
-            HELP_SPACING + HELP_DESCRIPTION_SPACING  + "Display this menu.",     
+
         };
     }
 
@@ -268,6 +281,10 @@ public class ImportTable implements Tool
                     
                 case "--truncate":
                     truncate = true;
+                    break;
+                    
+                case "--connection-name":
+                    connectionName = args[++i];
                     break;
                     
                 case "--jdbc-url":
@@ -328,9 +345,30 @@ public class ImportTable implements Tool
         if(tableName == null) return error("No table name specified, and cannot be inferred from source! Use -n to specify a name.");       
         if(source == null) return error("No source specified!");
         if(input == null) return error("No input type specified and unable to autodetect");
-        if(jdbcURL == null) return error("JDBC URL not specified!");
         
-        System.out.println("Import completed");
+        if(connectionName != null)
+        {
+            connection = StoredConnections.getConnection(connectionName);
+            
+            if(connection == null)
+            {
+                exit(255, "Saved connection " + connectionName + " does not exist!");
+            }
+        }
+        else
+        {
+            if(jdbcURL == null) return error("JDBC URL not specified!");
+            if(username == null) return error("Username not specified!");
+            
+            connection = AutomaticDrivers.getDriverByURL(jdbcURL)
+                    .createConnection(null)
+                    .driver()
+                    .url(jdbcURL)
+                    .password(password)
+                    .username(username)
+                    .build();
+        }
+        
         return true;
     }
     
@@ -398,35 +436,28 @@ public class ImportTable implements Tool
         List<AtomicOperation> operations = new ArrayList<>();
         Iterable<JSONObject> sourceIterable;
         
-        DatabaseMetaData metadata;
-        GenerateTable create;
         String createQuery;
         
+        DBMS dbms; 
         TransactionOperation transaction;
         BatchOperation batch; 
         
         Query query = getInsertQuery();
-        DataSource dataSource = DriverDataSource.getDataSource(jdbcURL, username, password);
-        DBMS dbms = new DBMS(dataSource);
-          
+        
         if(query == null) Virge.exit(5, "Source provided no records to load!");
+
+        dbms = connection.getDBMS();
         
         sourceIterable = input.read(source);
         
         if(detectTypes) sourceIterable = new CoerceStringsTransformer().transform(sourceIterable);
 
         batch = new BatchOperation(query, sourceIterable);
-        
-        if(this.createTable)
+
+        if(this.createTable && !checkIfTableExists())
         {
-            metadata = dbms.getSource().getConnection().getMetaData();
-            
-            if(!checkIfTableExists(metadata))
-            {
-                create = new GenerateTable();
-                createQuery = create.generateTableSQL(source, input, tableName, detectTypes);
-                operations.add(new QueryOperation(new Query(createQuery)));
-            }
+            createQuery = new GenerateTable().generateTableSQL(source, input, tableName, detectTypes);
+            operations.add(new QueryOperation(new Query(createQuery)));
         }
         
         if(this.truncate)
@@ -438,24 +469,20 @@ public class ImportTable implements Tool
         transaction = new TransactionOperation(operations.toArray(new AtomicOperation[operations.size()]));
         
         dbms.update(transaction);
+        
+        System.out.println("Import completed");
     }    
     
-    private boolean checkIfTableExists(DatabaseMetaData metaData) throws SQLException 
+    private boolean checkIfTableExists() throws SQLException 
     {
-        ResultSet tables = null;
-
-        try 
+        Table[] tables = connection.getSchemaLayout().getAllTables();
+        
+        for(Table table : tables)
         {
-            // Note: Convirgance JDBC, Schema issue
-            tables = metaData.getTables(null, null, tableName, new String[] {"TABLE"});
-            if(tables.next()) return true;
-
-            return false;
-        } 
-        finally 
-        {
-            if(tables != null) tables.close();
+            if(table.getName().equals(tableName)) return true;
         }
+        
+        return false;
     }
     
     private Input<JSONObject> getInputType(String type)
