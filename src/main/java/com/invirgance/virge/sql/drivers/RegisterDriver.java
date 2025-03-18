@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Virge CLI tool, registers a custom driver to use with stored connections or with the SQL databases.
+ * Virge CLI tool, registers a custom driver to use with stored connections or with other Virge SQL tools.
  * 
  * @author tadghh
  */
