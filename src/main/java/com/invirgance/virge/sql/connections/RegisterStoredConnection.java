@@ -179,7 +179,7 @@ public class RegisterStoredConnection implements Tool
         if(this.isDataSource) addDataSourceConnection();
         else addConnection();
         
-        System.out.println("Saved new Stored Connection (type: " + connectionType() + "): " + storedConnection.getName());       
+        System.out.println("Saved new Stored Connection (type: " + connectionType() + "): " + this.storedConnection.getName());       
         System.out.println(this.storedConnection.toString());       
     }
     
@@ -252,11 +252,11 @@ public class RegisterStoredConnection implements Tool
                 }
                 
                 connection.property(key, entry.getValue());           
-            }  
-            
-            this.storedConnection = connection.build();
-            this.storedConnection.save(); 
-        }    
+            }   
+        }  
+        
+        this.storedConnection = connection.build();
+        this.storedConnection.save(); 
     }
     
     private void addConnection()
@@ -275,11 +275,13 @@ public class RegisterStoredConnection implements Tool
         this.storedConnection.save();
     }
  
+    // Returns the type of stored connection that is being created
     private String connectionType()
     {
         return this.isDataSource ? "DataSource" : "Driver";
     }
     
+    // Creates a default name when no name is provided
     private String createNewConnectionName(AutomaticDriver driver)
     {
         String suffix = "";
