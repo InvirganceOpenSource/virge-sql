@@ -22,16 +22,16 @@ SOFTWARE.
 
 package com.invirgance.virge.sql.drivers;
 
-import com.invirgance.convirgance.ConvirganceException;
 import com.invirgance.convirgance.jdbc.AutomaticDriver;
 import com.invirgance.convirgance.jdbc.AutomaticDrivers;
+import com.invirgance.virge.Virge;
 import static com.invirgance.virge.Virge.HELP_DESCRIPTION_SPACING;
 import static com.invirgance.virge.Virge.HELP_SPACING;
 import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
 import com.invirgance.virge.tool.Tool;
 
 /**
- * Removes a driver, Virge will no longer be able to use this to communicate with Databases.
+ * Removes a driver, preventing further use of it within Virge.
  * Consider using this if you need to override one of the default drivers.
  * 
  * @author tadghh
@@ -64,7 +64,7 @@ public class UnregisterDriver implements Tool
     @Override 
     public String getShortDescription()
     {
-        return "Remove a driver so it can no longer be used to create connections.";
+        return "Remove a driver so it can no longer be used within Virge.";
     }
     
     @Override
@@ -78,14 +78,14 @@ public class UnregisterDriver implements Tool
             switch(args[i])
             {
                 case "--name":
-                case "-n":
-                    this.name = args[++i];
+                case "-n":                 
+                    if(i + 1 < args.length) this.name = args[++i];
+                    
                     break;
                 
                 case "--help":
                 case "-h":
                     printToolHelp(this);    
-                    break;    
                     
                 default:
                     System.err.println("Unknown option: " + args[i]);
@@ -93,14 +93,15 @@ public class UnregisterDriver implements Tool
             }
         }
         
+        if(name == null) Virge.exit(255, "Error: You must provide the name of the driver to unregister...");
+        
         return true;
     }
 
     @Override
     public void execute() throws Exception
     {
-        if(name == null) printDriver(name);
-        else unregisterDriver(name);
+        unregisterDriver(name);
     }
     
     @Override
@@ -109,45 +110,20 @@ public class UnregisterDriver implements Tool
         return "virge.jar sql drivers remove -n <NAME>";
     }
     
-    /**
-     * Prints out detailed information about the driver after it has been removed.
-     * This includes: 
-     * - Driver
-     * - DataSource
-     * - URL prefix
-     * - Keys
-     * - Examples
-     * 
-     * @param driver The drivers name.
-     */
-    public void printDriver(String driver)
-    {
-        AutomaticDriver selected = AutomaticDrivers.getDriverByName(driver);
-
-        if(selected == null) throw new ConvirganceException("Unknown driver: " + driver);
-        
-        System.out.println(selected.toString());
-    }
-    
-    /**
-     * Removes the driver, Virge will no longer be able to use this.
-     * 
-     * @param name The drivers name.
-     */
-    public void unregisterDriver(String name)
+    private void unregisterDriver(String name)
     {
         AutomaticDriver driver = AutomaticDrivers.getDriverByName(name);
         
         if(driver == null)
         {
             System.err.println("Driver '" + name + "' not found!");
-            System.out.println("Hint: Use the 'list' command to view the name of each driver.");
-            System.exit(1);
+            System.out.println("Hint: Use 'virge.jar sql drivers list' to view the name of each driver.");
+        
+            return;
         }
         
-        System.out.println("Removed Driver: " + name);
-        
-        // Note: config conflict with pre-ConvirganceJDBC, need to remove old .virge folder from user home
         driver.delete();      
+        
+        System.out.println("Removed Driver: " + name);
     }
 }
