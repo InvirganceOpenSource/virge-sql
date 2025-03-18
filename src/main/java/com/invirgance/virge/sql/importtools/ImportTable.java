@@ -43,6 +43,7 @@ import com.invirgance.convirgance.json.JSONObject;
 import com.invirgance.convirgance.source.FileSource;
 import com.invirgance.convirgance.source.InputStreamSource;
 import com.invirgance.convirgance.source.Source;
+import com.invirgance.convirgance.source.URLSource;
 import com.invirgance.convirgance.transform.CoerceStringsTransformer;
 import com.invirgance.virge.Virge;
 import static com.invirgance.virge.Virge.HELP_DESCRIPTION_SPACING;
@@ -84,21 +85,15 @@ public class ImportTable implements Tool
     
     private boolean isURL(String path)
     {
-        char c;
-        
-        if(!path.contains(":/")) return false;
-        if(path.charAt(0) == ':') return false;
-        
-        for(int i=0; i<path.length(); i++)
+        try
         {
-            c = path.charAt(i);
-            
-            if(c == ':') return (path.charAt(i+1) == '/');
-                
-            if(!Character.isLetter(c)) return false;
+            new URL(path);
+            return true;
         }
-        
-        return false;
+        catch (MalformedURLException e)
+        {
+            return false;
+        }
     }
     
     private Source getSource(String path) throws MalformedURLException, IOException
@@ -118,8 +113,8 @@ public class ImportTable implements Tool
             
                 if(tableName.contains(".")) tableName = tableName.substring(0, tableName.indexOf('.'));
             }
-
-            return new InputStreamSource(url.openStream());
+            
+            return new URLSource(url);
         }
         
         file = new File(path);
