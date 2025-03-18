@@ -101,7 +101,7 @@ public class UnregisterDriver implements Tool
     @Override
     public void execute() throws Exception
     {
-        unregisterDriver(name);
+        unregisterDriver();
     }
     
     @Override
@@ -110,7 +110,7 @@ public class UnregisterDriver implements Tool
         return "virge.jar sql drivers remove -n <NAME>";
     }
     
-    private void unregisterDriver(String name)
+    private void unregisterDriver()
     {
         AutomaticDriver driver = AutomaticDrivers.getDriverByName(name);
         
@@ -121,8 +121,8 @@ public class UnregisterDriver implements Tool
         
             return;
         }
-        
-        driver.delete();      
+
+        driver.delete();
         
         System.out.println("Removed Driver: " + name);
     }
