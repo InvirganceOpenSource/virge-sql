@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Registers a driver allowing Virge to communicate with the Database.
+ * Virge CLI tool, registers a custom driver to use with stored connections or with the SQL databases.
  * 
  * @author tadghh
  */
@@ -42,9 +42,9 @@ public class RegisterDriver implements Tool
     private String name;
     private String datasource;
  
-    private final List<String> artifact = new ArrayList<>();
-    private final List<String> prefix = new ArrayList<>();
-    private final List<String> example = new ArrayList<>();
+    private final List<String> artifacts = new ArrayList<>();
+    private final List<String> prefixes = new ArrayList<>();
+    private final List<String> examples = new ArrayList<>();
     
     @Override
     public String getName()
@@ -61,18 +61,18 @@ public class RegisterDriver implements Tool
             HELP_SPACING + "-n <NAME>",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "Set the name of the driver. If the name matches an existing",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "driver, the existing driver will be updated.",
-            HELP_SPACING + "",
+            "",
             HELP_SPACING + "--artifact <MAVEN_COORDINATES>",
             HELP_SPACING + "-a <MAVEN_COORDINATES>",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "The Maven coordinates of the JDBC driver. This option can be",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "specified more than once if multiple JARs are needed.",
             "",
-            HELP_SPACING + "--driver <CLASS_NAME>",
-            HELP_SPACING + "-d <CLASS_NAME>",
-            HELP_SPACING + HELP_DESCRIPTION_SPACING + "The class name of the JDBC Driver implementation.",
+            HELP_SPACING + "--driver <CANONICAL_NAME>",
+            HELP_SPACING + "-d <CANONICAL_NAME>",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "The Canonical name of the JDBC Driver implementation.",
             "",
-            HELP_SPACING + "--data-source <DATA_SOURCE>",
-            HELP_SPACING + "-D <DATA_SOURCE>",
+            HELP_SPACING + "--data-source [DATA_SOURCE]",
+            HELP_SPACING + "-D [DATA_SOURCE]",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "The class name of the JDBC DataSource implementation. If",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "not specified, a default Data Source wrapping the Driver",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "will be used.",
@@ -81,7 +81,12 @@ public class RegisterDriver implements Tool
             HELP_SPACING + "-p <URL_PREFIX>",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "The url prefix used by this driver. e.g. jdbc:oracle:",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "This option can be specified more than once if multiple",
-            HELP_SPACING + HELP_DESCRIPTION_SPACING + "prefixes are supported.",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "prefixes are supported by the driver.",
+            "",
+            HELP_SPACING + "--example [URL_EXAMPLE]",
+            HELP_SPACING + "-e [URL_EXAMPLE]",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "An example connection string to display when viewing information about the driver.",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "This option can be specified more than once.",
             "",           
             HELP_SPACING + "--help",
             HELP_SPACING + "-h",
@@ -110,9 +115,14 @@ public class RegisterDriver implements Tool
                     this.name = args[++i];
                     break;
                 
+                case "--example":
+                case "-e":
+                    this.examples.add(args[++i]);
+                    break;                 
+                    
                 case "--artifact":
                 case "-a":
-                    this.artifact.add(args[++i]);
+                    this.artifacts.add(args[++i]);
                     break;                    
                 
                 case "--driver":
@@ -127,7 +137,7 @@ public class RegisterDriver implements Tool
                     
                 case "--prefix":
                 case "-p":
-                    this.prefix.add(args[++i]);
+                    this.prefixes.add(args[++i]);
                     break;
                 
                 case "--help":
@@ -167,10 +177,11 @@ public class RegisterDriver implements Tool
         
         if(descriptor == null) 
         {
+
             builder = drivers.createDriver(name)
-                    .artifact(artifact.toArray(new String[artifact.size()]))
-                    .prefix(prefix.toArray(new String[prefix.size()]))
-                    .example(example.toArray(new String[example.size()]));
+                    .artifact(artifacts.toArray(new String[artifacts.size()]))
+                    .prefix(prefixes.toArray(new String[prefixes.size()]))
+                    .example(examples.toArray(new String[examples.size()]));
             
             if(driver != null) builder = builder.driver(driver);
             
@@ -184,12 +195,15 @@ public class RegisterDriver implements Tool
             }
             
             descriptor = builder.build();
+            
+            System.err.println("Registered new Driver: " + descriptor.getName());
         }
         else
         {
-            if(!artifact.isEmpty()) descriptor.setArtifacts(artifact.toArray(new String[artifact.size()]));
-            if(!prefix.isEmpty()) descriptor.setPrefixes(prefix.toArray(new String[prefix.size()]));
-            if(!example.isEmpty()) descriptor.setExamples(example.toArray(new String[example.size()]));
+            // Updating information for an existing driver
+            if(!artifacts.isEmpty()) descriptor.setArtifacts(artifacts.toArray(new String[artifacts.size()]));
+            if(!prefixes.isEmpty()) descriptor.setPrefixes(prefixes.toArray(new String[prefixes.size()]));
+            if(!examples.isEmpty()) descriptor.setExamples(examples.toArray(new String[examples.size()]));
                         
             if(driver != null) descriptor.setDriver(driver);
             if(datasource != null) descriptor.setDataSource(datasource);
@@ -231,7 +245,7 @@ public class RegisterDriver implements Tool
         
         descriptor.save();
 
-        System.err.println("Registered");
+        System.out.println("Saved!");
         System.out.println(descriptor.toString());
     }
     
