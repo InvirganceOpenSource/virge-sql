@@ -65,10 +65,10 @@ public class VirgeSQL
     }
     
     /**
-     * Prints out the help for:
-     * - Top level commands
-     * - Sub level command options
-     * - When no command is provided
+     * Prints out the help for a tool and then exits the program:
+     * - Top level tools
+     * - Sub level tool options
+     * - When no tool is provided
      * 
      * If this module is called without any tool, than the help for this specific module is printed
      * 
