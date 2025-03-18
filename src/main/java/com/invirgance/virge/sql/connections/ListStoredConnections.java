@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
+ * Virge CLI tool, lists the current stored connections.
  * 
  * @author tadghh
  */
@@ -49,7 +50,7 @@ public class ListStoredConnections implements Tool
     @Override
     public String getShortDescription()
     {
-        return "List all current connection names and drivers.";
+        return "Lists all the stored connections.";
     }
     
     @Override
@@ -57,11 +58,11 @@ public class ListStoredConnections implements Tool
     {
         return new String[]{
            HELP_SPACING + "default*",
-           HELP_SPACING + HELP_DESCRIPTION_SPACING + "List all current connection names and drivers.",         
+           HELP_SPACING + HELP_DESCRIPTION_SPACING + "Lists all current stored connections.",         
            "",
            HELP_SPACING + "--name <NAME>",
            HELP_SPACING + "-n <NAME>",
-           HELP_SPACING + HELP_DESCRIPTION_SPACING + "The name of the connection to view.",         
+           HELP_SPACING + HELP_DESCRIPTION_SPACING + "View detailed information about the connection.",         
            "",
            HELP_SPACING + "--help",
            HELP_SPACING + "-h",
@@ -103,14 +104,14 @@ public class ListStoredConnections implements Tool
     
     private void getInfo()
     {
-        StoredConnection driver = StoredConnections.getConnection(this.name);
+        StoredConnection connection = StoredConnections.getConnection(this.name);
         
-        System.out.println("Config: " + driver.getName());
-        System.out.println(driver.toString());
+        System.out.println("Config: " + connection.getName());
+        System.out.println(connection.toString());
     }
     
     /**
-     * Prints out high level information for the registered drivers.
+     * Prints out the name, driver and data source for the save stored connections.
      */
     public void listAll()
     {

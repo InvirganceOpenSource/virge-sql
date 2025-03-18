@@ -29,7 +29,8 @@ import static com.invirgance.virge.sql.VirgeSQL.printToolHelp;
 import com.invirgance.virge.tool.Tool;
 
 /**
- *
+ * Virge CLI tool, un-registers and removes stored connections.
+ * 
  * @author tadghh
  */
 public class UnregisterStoredConnection implements Tool

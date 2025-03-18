@@ -38,21 +38,22 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
+ * Virge CLI tool for registering stored connections
+ * 
  * @author tadghh
  */
 public class RegisterStoredConnection implements Tool
 {
-    private boolean datasourceMode = false;
+    private boolean isDataSource = false;
     private boolean skipConnectionTest = false;
-    
+    private StoredConnection storedConnection;
     private String username;
     private String name;
     private String password = "";
     private String url;
     private String database;
 
-    private HashMap<String, String> extras = new HashMap<>();
+    private final HashMap<String, String> extras = new HashMap<>();
     
     @Override
     public String getName()
@@ -92,6 +93,7 @@ public class RegisterStoredConnection implements Tool
            "",
            HELP_SPACING + "--type-datasource",
            HELP_SPACING + HELP_DESCRIPTION_SPACING + "Toggle this flag to add the StoredConnection as a data source config.",         
+           HELP_SPACING + HELP_DESCRIPTION_SPACING + "Enabling this will also allow you to add datasource specific properties with '--'",         
            "",
            HELP_SPACING + "--skip-test",
            HELP_SPACING + HELP_DESCRIPTION_SPACING + "Skips testing the Stored Connection.",         
@@ -138,7 +140,7 @@ public class RegisterStoredConnection implements Tool
                     break;
                     
                 case "--type-datasource":
-                    this.datasourceMode = true;
+                    this.isDataSource = true;
                     break;
                     
                 case "--skip-test":
@@ -158,14 +160,11 @@ public class RegisterStoredConnection implements Tool
             }
         }
         
-        if(this.datasourceMode)
+        if(this.isDataSource && this.database == null)
         {
-            if(this.database == null)
-            {
-                Virge.exit(255, "Failed: Attempted to create a stored connection without a selected database...");
-            }
+            Virge.exit(255, "Failed: Attempted to create a stored connection without a selected database...");
         }
-        else
+        else if(!this.isDataSource)
         {
             if(this.username == null) Virge.exit(255, "Failed: Stored Connection can not be created without a username");
             if(this.url == null) Virge.exit(255, "Failed: The Stored Connection was not provided a url...");  
@@ -173,11 +172,27 @@ public class RegisterStoredConnection implements Tool
 
         return true;
     }
+    
+    @Override
+    public void execute() throws Exception
+    {
+        if(this.isDataSource) addDataSourceConnection();
+        else addConnection();
+        
+        System.out.println("Saved new Stored Connection (type: " + connectionType() + "): " + storedConnection.getName());       
+        System.out.println(this.storedConnection.toString());       
+    }
+    
+    // For handling datasource specific parameters, these being with '--'
+    // ex: '--enableFastMode' 
+    // virge.jar sql connection add -n testName --type-datasource --database PostgreSQL --sendBufferSize 1
     private boolean checkOptionFallThrough(String[] args, int index)
     {
-        if(index != args.length && this.datasourceMode)
+        String option;
+        
+        if(this.isDataSource && index != args.length)
         {
-            var option = args[index];
+            option = args[index];
             String value;
 
             if(!option.startsWith("--")) 
@@ -202,26 +217,20 @@ public class RegisterStoredConnection implements Tool
         {   
             System.err.println("Unknown option: " + args[index]);
             System.out.println("Hint: Are you trying to configure a datasource? add --type-datasource");
+            
             return false;
         }
+        
         return true;
     }
-    @Override
-    public void execute() throws Exception
-    {
-        if(this.datasourceMode) addDataSourceConfigConnection();
-        else addConnection();
-    }
     
-    private void addDataSourceConfigConnection()
-    {
-        String configName;        
-        DataSourceConfigBuilder storedConnection;
+    private void addDataSourceConnection()
+    {  
+        DataSourceConfigBuilder connection;
         
         AutomaticDriver driver = AutomaticDrivers.getDriverByName(this.database);
-        
-        configName = this.name == null ? driver.getName() : this.name;
-        storedConnection = driver.createConnection(configName).datasource();
+
+        connection = driver.createConnection(createNewConnectionName(driver)).datasource();
         
         // Verify valid property
         DataSourceManager manager;        
@@ -242,37 +251,42 @@ public class RegisterStoredConnection implements Tool
                     return;
                 }
                 
-                storedConnection.property(key, entry.getValue());           
+                connection.property(key, entry.getValue());           
             }  
             
-            storedConnection.build().save(); 
-            System.out.println("Saved new Stored Connection: " + configName);       
+            this.storedConnection = connection.build();
+            this.storedConnection.save(); 
         }    
     }
     
     private void addConnection()
     {
-        String configName;
-        String suffix = "";
-        StoredConnection storedConnection;
         AutomaticDriver driver = AutomaticDrivers.getDriverByURL(this.url);
         
-        if(this.username != null) suffix = this.username;
-        
-        configName = this.name == null ? driver.getName() + suffix : this.name;
-        
-        storedConnection = driver.createConnection(configName)
+        this.storedConnection = driver.createConnection(createNewConnectionName(driver))
                 .driver()
                 .url(this.url)
                 .username(this.username)
                 .password(this.password)
                 .build();
         
-        if(!this.skipConnectionTest) testStoredConnection(storedConnection);
-       
-        storedConnection.save();
+        if(!this.skipConnectionTest) testStoredConnection(this.storedConnection);
+
+        this.storedConnection.save();
+    }
+ 
+    private String connectionType()
+    {
+        return this.isDataSource ? "DataSource" : "Driver";
+    }
+    
+    private String createNewConnectionName(AutomaticDriver driver)
+    {
+        String suffix = "";
         
-        System.out.println("Saved new Stored Connection: " + configName);
+        if(this.username != null) suffix = this.username;
+        
+        return this.name == null ? driver.getName() + suffix : this.name;
     }
     
     private String normalizeExtraOption(String option)
