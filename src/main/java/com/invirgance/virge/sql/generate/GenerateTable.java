@@ -27,6 +27,8 @@ import com.invirgance.convirgance.input.DelimitedInput;
 import com.invirgance.convirgance.input.Input;
 import com.invirgance.convirgance.input.JBINInput;
 import com.invirgance.convirgance.input.JSONInput;
+import com.invirgance.convirgance.jdbc.AutomaticDriver;
+import com.invirgance.convirgance.jdbc.AutomaticDrivers;
 import com.invirgance.convirgance.json.JSONObject;
 import com.invirgance.convirgance.source.FileSource;
 import com.invirgance.convirgance.source.InputStreamSource;
@@ -53,12 +55,13 @@ import java.text.DecimalFormatSymbols;
  */
 public class GenerateTable implements Tool
 {
-    private Source source;
-    private Input<JSONObject> input;
-
     private char inputDelimiter;
     private boolean detectTypes = false;
     private String tableName;
+    private AutomaticDriver driver;
+    
+    private Source source;
+    private Input<JSONObject> input;
     
     private boolean isURL(String path)
     {
@@ -169,6 +172,10 @@ public class GenerateTable implements Tool
             HELP_SPACING + "-S [DELIMITER]",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "Set the column delimiter if the source is a delimited file (e.g. , or |)",
             "",
+            HELP_SPACING + "--driver <DRIVER_NAME>",
+            HELP_SPACING + "-d <DRIVER_NAME>",
+            HELP_SPACING + HELP_DESCRIPTION_SPACING + "Specify the driver to use when generating the query.",
+            "",
             HELP_SPACING + "--name [NAME]",
             HELP_SPACING + "-n [NAME]",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "Specify the name for the generated table. Otherwise the name will be created from the 'source'",
@@ -264,6 +271,15 @@ public class GenerateTable implements Tool
                     
                     break;
                     
+                case "--driver":
+                case "-d":
+                    if(i + 1 < args.length) 
+                    {
+                        driver = AutomaticDrivers.getDriverByName(args[++i]);   
+                    }
+                    
+                    break;
+                    
                 case "--detect-input-types":
                 case "-a":
                     detectTypes = true;
@@ -308,11 +324,6 @@ public class GenerateTable implements Tool
         
         return true;
     }
-
-    private String normalizeObjectName(String name)
-    {
-        return "\"" + name + "\"";
-    }
     
     /**
      * Returns a string that can be used to create a table based on the source data.
@@ -324,7 +335,7 @@ public class GenerateTable implements Tool
      * @return A String representing a SQL create statement.
      * @throws Exception If something goes horribly wrong.
      */
-    public String generateTableSQL(Source source, Input<JSONObject> input, String name, boolean detect) throws Exception
+    public String generateTableSQL(AutomaticDriver driver, Source source, Input<JSONObject> input, String name, boolean detect) throws Exception
     {
        Iterable<JSONObject> iterable;
        StringBuffer sql = new StringBuffer();
@@ -371,7 +382,7 @@ public class GenerateTable implements Tool
            if(index++ > 0) sql.append(",\n");
 
            sql.append("    ");
-           sql.append(normalizeObjectName(column.name));
+           sql.append(driver.quoteIdentifier(column.name));
            sql.append(" ");
            sql.append(column.getType());
 
@@ -390,7 +401,7 @@ public class GenerateTable implements Tool
     @Override
     public void execute() throws Exception
     {
-        System.out.println(generateTableSQL(source, input, tableName, detectTypes));
+        System.out.println(generateTableSQL(driver, source, input, tableName, detectTypes));
     }
     
     private class Column

@@ -384,14 +384,7 @@ public class ImportTable implements Tool
         
         return false;
     }
-    
-    private String normalizeObjectName(String name)
-    {
-        if(this.jdbcURL.contains("jdbc:mysql")) return name;
-        else if(this.jdbcURL.contains("jdbc:maria")) return "`" + name + "`";
-        
-        return "\"" + name + "\"";
-    }
+   
     
     private Query getInsertQuery() throws Exception
     {
@@ -416,8 +409,7 @@ public class ImportTable implements Tool
             if(index > 0) sql.append(",\n");
             
             sql.append("    ");
-            sql.append(normalizeObjectName(key));
-            
+            sql.append(connection.getDriver().quoteIdentifier(key));
             index++;
         }
         
@@ -469,7 +461,7 @@ public class ImportTable implements Tool
 
         if(this.createTable && !checkIfTableExists())
         {
-            createQuery = new GenerateTable().generateTableSQL(source, input, tableName, detectTypes);
+            createQuery = new GenerateTable().generateTableSQL(connection.getDriver(), source, input, tableName, detectTypes);
             operations.add(new QueryOperation(new Query(createQuery)));
         }
         
