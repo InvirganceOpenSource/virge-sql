@@ -31,6 +31,7 @@ import com.invirgance.convirgance.json.JSONObject;
 import com.invirgance.convirgance.source.FileSource;
 import com.invirgance.convirgance.source.InputStreamSource;
 import com.invirgance.convirgance.source.Source;
+import com.invirgance.convirgance.source.URLSource;
 import com.invirgance.convirgance.transform.CoerceStringsTransformer;
 import com.invirgance.virge.Virge;
 import static com.invirgance.virge.Virge.HELP_DESCRIPTION_SPACING;
@@ -58,44 +59,18 @@ public class GenerateTable implements Tool
     private char inputDelimiter;
     private boolean detectTypes = false;
     private String tableName;
-
-    public Source getSource()
-    {
-        return source;
-    }
-
-    public void setSource(Source source)
-    {
-        this.source = source;
-    }
-
-    public Input<JSONObject> getInput()
-    {
-        return input;
-    }
-
-    public void setInput(Input<JSONObject> input)
-    {
-        this.input = input;
-    }
     
     private boolean isURL(String path)
     {
-        char c;
-        
-        if(!path.contains(":/")) return false;
-        if(path.charAt(0) == ':') return false;
-        
-        for(int i=0; i<path.length(); i++)
+        try
         {
-            c = path.charAt(i);
-            
-            if(c == ':') return (path.charAt(i+1) == '/');
-                
-            if(!Character.isLetter(c)) return false;
+            new URL(path);
+            return true;
         }
-        
-        return false;
+        catch (MalformedURLException e)
+        {
+            return false;
+        }
     }
     
     private Source getSource(String path) throws MalformedURLException, IOException
@@ -113,10 +88,10 @@ public class GenerateTable implements Tool
             {
                 tableName = url.getFile();
             
-                if(tableName.contains(".")) tableName = tableName.substring(0, tableName.indexOf('.'));
+                autoSetTableName();
             }
 
-            return new InputStreamSource(url.openStream());
+            return new URLSource(url);
         }
         
         file = new File(path);
@@ -132,10 +107,15 @@ public class GenerateTable implements Tool
         {
             tableName = file.getName();
             
-            if(tableName.contains(".")) tableName = tableName.substring(0, tableName.indexOf('.'));      
+            autoSetTableName();   
         }
         
         return new FileSource(file);
+    }
+    
+    private void autoSetTableName()
+    {
+        if(tableName.contains(".")) tableName = tableName.substring(tableName.lastIndexOf("/") + 1, tableName.indexOf('.'));
     }
     
     // TODO: Improve auto-detection
@@ -262,21 +242,25 @@ public class GenerateTable implements Tool
                 case "--help":
                 case "-h":
                     printToolHelp(this);
-                    return true;
                 
                 case "--source-delimiter":
                 case "-S":
-                    inputDelimiter = args[++i].charAt(0);
-                    
-                    if(input instanceof DelimitedInput) ((DelimitedInput)input).setDelimiter(inputDelimiter);
+                    if(i + 1 < args.length) 
+                    {
+                        inputDelimiter = args[++i].charAt(0);
+                        if(input instanceof DelimitedInput) ((DelimitedInput)input).setDelimiter(inputDelimiter);
+                    }
                     
                     break;
                     
                 case "--source-type":
                 case "-i":
-                    input = getInputType(args[++i]);
-                    
-                    if(input instanceof DelimitedInput) ((DelimitedInput)input).setDelimiter(inputDelimiter);
+                    if(i + 1 < args.length) 
+                    {
+                        input = getInputType(args[++i]);
+                        
+                        if(input instanceof DelimitedInput) ((DelimitedInput)input).setDelimiter(inputDelimiter);
+                    }
                     
                     break;
                     
@@ -287,15 +271,18 @@ public class GenerateTable implements Tool
                     
                 case "--source":
                 case "-s":
-                    source = getSource(args[++i]);
+                    if(i + 1 < args.length)
+                    {
+                        source = getSource(args[++i]);
                     
-                    if(input == null) input = detectInput(args[i]);
+                        if(input == null) input = detectInput(args[i]);                        
+                    }
                     
                     break;
                     
                 case "--name":
                 case "-n":
-                    tableName = args[++i];
+                    if(i + 1 < args.length) tableName = args[++i];
                     break;
                     
                 default:
