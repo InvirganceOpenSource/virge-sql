@@ -177,7 +177,6 @@ public class RegisterDriver implements Tool
         
         if(descriptor == null) 
         {
-
             builder = drivers.createDriver(name)
                     .artifact(artifacts.toArray(new String[artifacts.size()]))
                     .prefix(prefixes.toArray(new String[prefixes.size()]))

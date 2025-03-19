@@ -326,8 +326,6 @@ public class ImportTable implements Tool
                     {
                         System.err.println("Unknown parameter: " + args[i]);
                         printToolHelp(this);
-                        
-                        return false;
                     }
             }
         }

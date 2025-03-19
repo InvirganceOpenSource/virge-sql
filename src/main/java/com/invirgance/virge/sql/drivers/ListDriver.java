@@ -34,13 +34,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Lists the registered database drivers.
+ * Lists the drivers registered with Virge.
  * 
  * @author tadghh
  */
 public class ListDriver implements Tool
 {
-    private String driver;
+    private String name;
     
     @Override
     public String getName()
@@ -53,7 +53,7 @@ public class ListDriver implements Tool
     {
         return new String[]{
            HELP_SPACING + "default",
-           HELP_SPACING + HELP_DESCRIPTION_SPACING + "Provides a brief overview and connection templates of the current drivers.",
+           HELP_SPACING + HELP_DESCRIPTION_SPACING + "Lists the driver names and connection url examples.",
            "",
            HELP_SPACING + "--name <NAME>",
            HELP_SPACING + "-n <NAME>",
@@ -80,20 +80,19 @@ public class ListDriver implements Tool
             {
                 case "--name":
                 case "-n":
-                    this.driver = args[++i];
+                    if(i + 1 < args.length) this.name = args[++i];
                     break;
                     
                 case "--help":
                 case "-h":
                     printToolHelp(this);    
-                    break;
                     
                 default:
                     System.err.println("Unknown option: " + args[i]);
                     return false;
             }
         }
-        
+
         return true;
     }
     
@@ -106,7 +105,7 @@ public class ListDriver implements Tool
     @Override
     public void execute() throws Exception
     {
-        if(driver != null) printDriver(driver);
+        if(name != null) printDriver();
         else printAll();
     }
     
@@ -121,10 +120,10 @@ public class ListDriver implements Tool
      * 
      * @param driver The drivers name.
      */
-    public void printDriver(String driver)
+    private void printDriver()
     {
         // Note: this is case-insensitve
-        AutomaticDriver selected = AutomaticDrivers.getDriverByName(driver);
+        AutomaticDriver selected = AutomaticDrivers.getDriverByName(name);
 
         if(selected == null) 
         {
@@ -132,7 +131,7 @@ public class ListDriver implements Tool
             System.out.println("View the current driver names below:");
             printAll();
             System.out.println();
-            Virge.exit(254, "Unknown driver name: " + driver);
+            Virge.exit(254, "Unknown driver name: " + name);
         }
         
         System.out.println(selected.toString());
@@ -159,7 +158,7 @@ public class ListDriver implements Tool
         }
         
         new ConsoleOutputFormatter()
-                .addColumn("Database Name", names)
+                .addColumn("Driver name", names)
                 .addColumn("Connection String Example", examples)
                 .print();
     }
