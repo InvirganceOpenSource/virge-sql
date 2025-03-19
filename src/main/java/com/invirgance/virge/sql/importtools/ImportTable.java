@@ -96,6 +96,11 @@ public class ImportTable implements Tool
         }
     }
     
+    private void autoSetTableName()
+    {
+        if(tableName.contains(".")) tableName = tableName.substring(tableName.lastIndexOf("/") + 1, tableName.indexOf('.'));
+    }
+    
     private Source getSource(String path) throws MalformedURLException, IOException
     {
         File file;
@@ -111,7 +116,7 @@ public class ImportTable implements Tool
             {
                 tableName = url.getFile();
             
-                if(tableName.contains(".")) tableName = tableName.substring(0, tableName.indexOf('.'));
+                autoSetTableName();
             }
             
             return new URLSource(url);
@@ -130,7 +135,7 @@ public class ImportTable implements Tool
         {
             tableName = file.getName();
             
-            if(tableName.contains(".")) tableName = tableName.substring(0, tableName.indexOf('.'));      
+            autoSetTableName();
         }
         
         return new FileSource(file);
@@ -251,8 +256,6 @@ public class ImportTable implements Tool
                 case "--help":
                 case "-h":
                     printToolHelp(this);
-                    
-                    return true;
                 
                 case "--source-delimiter":
                 case "-S":
