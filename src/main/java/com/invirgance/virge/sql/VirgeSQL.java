@@ -47,6 +47,7 @@ public class VirgeSQL
         new DriverTools(),
         new GenerationTools(),
         new ImportTools(),
+        new ExportTools(),
         new ConnectionTools()
     }; 
      

@@ -232,7 +232,6 @@ public class ImportTable implements Tool
             HELP_SPACING + "--jdbc-url <URL>",
             HELP_SPACING + "-j <URL>",
             HELP_SPACING + HELP_DESCRIPTION_SPACING + "Alternate method of specifying the JDBC connection url ",
-
         };
     }
 
