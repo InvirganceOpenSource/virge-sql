@@ -145,6 +145,7 @@ public class ListDriver implements Tool
         String example;
         
         List<String> names = new ArrayList<>();
+        List<String> canonicalNames = new ArrayList<>();
         List<String> examples = new ArrayList<>();
         
         AutomaticDrivers drivers = new AutomaticDrivers();
@@ -155,10 +156,12 @@ public class ListDriver implements Tool
             
             examples.add(example);
             names.add(descriptor.getName());
+            canonicalNames.add(descriptor.getDriverClassName());
         }
         
         new ConsoleOutputFormatter()
-                .addColumn("Driver name", names)
+                .addColumn("Driver Name", names)
+                .addColumn("Full Name", canonicalNames)
                 .addColumn("Connection String Example", examples)
                 .print();
     }
