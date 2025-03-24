@@ -134,7 +134,7 @@ public class ListStoredConnections implements Tool
         new ConsoleOutputFormatter()
                 .addColumn("Connection Name", names)
                 .addColumn("Driver", drivers)
-                .addColumn("DataSource", datasources)
+                .addColumn("Data Source", datasources)
                 .print();
     }
 }
