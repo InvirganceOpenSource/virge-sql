@@ -61,12 +61,14 @@ public class ListDataSource implements Tool
     {
         return new String[]{
            HELP_SPACING + "default",
-           HELP_SPACING + HELP_DESCRIPTION_SPACING + "Displays the current DataSources.",
+           HELP_SPACING + HELP_DESCRIPTION_SPACING + "Displays the current Data Sources and their names.",
            "",
-           HELP_SPACING + "--name [NAME]",
-           HELP_SPACING + "-n [NAME]",
+           HELP_SPACING + "--name <[NAME][CANONICAL NAME]>",
+           HELP_SPACING + "-n <[NAME][CANONICAL NAME]>",
            HELP_SPACING + HELP_DESCRIPTION_SPACING + "View a DataSource's properties.",         
-           HELP_SPACING + HELP_DESCRIPTION_SPACING + "Ex: -n OracleDataSource",         
+           HELP_SPACING + HELP_DESCRIPTION_SPACING + "Examples:",             
+           HELP_SPACING + HELP_SPACING + HELP_DESCRIPTION_SPACING + "-n \"Oracle Thin Driver\"",       
+           HELP_SPACING + HELP_SPACING + HELP_DESCRIPTION_SPACING + "-n oracle.jdbc.pool.OracleDataSource",               
            "",
            HELP_SPACING + "--help",
            HELP_SPACING + "-h",
@@ -109,22 +111,27 @@ public class ListDataSource implements Tool
  
     private void displayDataSources()
     {
+        String canonicalName; 
         AutomaticDriver driver;
         Iterator<AutomaticDriver> drivers = new AutomaticDrivers().iterator();
 
         List<String> names = new ArrayList<>();
         List<String> canonical = new ArrayList<>();
+        List<String> datasourceNames = new ArrayList<>();
 
         while(drivers.hasNext()) 
         {
             driver = drivers.next();
-
+            canonicalName = driver.getDataSource().getClass().getCanonicalName();
+            
             names.add(driver.getName());
-            canonical.add(driver.getDataSource().getClass().getCanonicalName());
+            canonical.add(canonicalName);
+            datasourceNames.add(driver.getDataSource().getClass().getSimpleName());
         }
         
         new ConsoleOutputFormatter()
                 .addColumn("Driver Name", names)
+                .addColumn("Data Source Name", datasourceNames)
                 .addColumn("Data Source", canonical)
                 .print();
     }
@@ -133,21 +140,26 @@ public class ListDataSource implements Tool
     {
         AutomaticDriver driver;
         
+        String canonical;
         String simple;
-
+        String header = "";
         Iterator<AutomaticDriver> drivers = new AutomaticDrivers().iterator();
         DataSourceManager manager;
         
         while(drivers.hasNext()) 
         {
             driver = drivers.next();
-            simple = driver.getDataSource().getClass().getSimpleName();
+            canonical = driver.getDataSource().getClass().getCanonicalName();
+            simple = driver.getName();
             
-            if(simple.equals(this.sourceName)) 
+            if(canonical.equals(this.sourceName) || simple.equals(this.sourceName)) 
             {
                 manager = new DataSourceManager(driver.getDataSource());
                 
-                System.out.println(driver.getName() + " (" + driver.getDataSource().getClass().getName() + ")");
+                if(simple.equals(this.sourceName)) header = simple + " | ";
+                
+                header += "Data Source (" + driver.getDataSource().getClass().getName() + ")";
+                System.out.println(header);
                 System.out.println(HELP_SPACING + "Properties:");
                 
                 for(String properties : manager.getProperties()) 
