@@ -25,7 +25,6 @@ import com.invirgance.convirgance.CloseableIterator;
 import com.invirgance.convirgance.ConvirganceException;
 import com.invirgance.convirgance.dbms.AtomicOperation;
 import com.invirgance.convirgance.dbms.BatchOperation;
-import com.invirgance.convirgance.dbms.DBMS;
 import com.invirgance.convirgance.dbms.Query;
 import com.invirgance.convirgance.dbms.QueryOperation;
 import com.invirgance.convirgance.dbms.TransactionOperation;
@@ -433,7 +432,7 @@ public class ImportTable implements Tool
         
         return new Query(sql.toString());
     }
-
+    
     @Override
     public void execute() throws Exception
     {
@@ -442,7 +441,6 @@ public class ImportTable implements Tool
         
         String createQuery;
         
-        DBMS dbms; 
         TransactionOperation transaction;
         BatchOperation batch; 
         
@@ -450,8 +448,7 @@ public class ImportTable implements Tool
         
         if(query == null) Virge.exit(5, "Source provided no records to load!");
 
-        dbms = connection.getDBMS();
-        
+  
         sourceIterable = input.read(source);
         
         if(detectTypes) sourceIterable = new CoerceStringsTransformer().transform(sourceIterable);
@@ -471,8 +468,10 @@ public class ImportTable implements Tool
         
         operations.add(batch);
         transaction = new TransactionOperation(operations.toArray(new AtomicOperation[operations.size()]));
-        
-        dbms.update(transaction);
+   
+        connection.execute(conn -> {
+            transaction.execute(conn);
+        });
         
         System.out.println("Import completed");
     }    
