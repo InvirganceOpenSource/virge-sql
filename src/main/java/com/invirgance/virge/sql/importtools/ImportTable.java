@@ -79,7 +79,7 @@ public class ImportTable implements Tool
     private String username;
     private String password;
     
-    private StoredConnection connection;
+    private StoredConnection storedConnection;
     private String connectionName;
     
     private boolean isURL(String path)
@@ -337,9 +337,9 @@ public class ImportTable implements Tool
         
         if(connectionName != null)
         {
-            connection = StoredConnections.getConnection(connectionName);
+            storedConnection = StoredConnections.getConnection(connectionName);
             
-            if(connection == null)
+            if(storedConnection == null)
             {
                 exit(255, "Saved connection " + connectionName + " does not exist!");
             }
@@ -349,7 +349,7 @@ public class ImportTable implements Tool
             if(jdbcURL == null) return error("JDBC URL not specified!");
             if(username == null) return error("Username not specified!");
             
-            connection = AutomaticDrivers.getDriverByURL(jdbcURL)
+            storedConnection = AutomaticDrivers.getDriverByURL(jdbcURL)
                     .createConnection(null)
                     .driver()
                     .url(jdbcURL)
@@ -407,7 +407,7 @@ public class ImportTable implements Tool
             if(index > 0) sql.append(",\n");
             
             sql.append("    ");
-            sql.append(connection.getDriver().quoteIdentifier(key));
+            sql.append(storedConnection.getDriver().quoteIdentifier(key));
             index++;
         }
         
@@ -457,7 +457,7 @@ public class ImportTable implements Tool
 
         if(this.createTable && !checkIfTableExists())
         {
-            createQuery = new GenerateTable().generateTableSQL(connection.getDriver(), source, input, tableName, detectTypes);
+            createQuery = new GenerateTable().generateTableSQL(storedConnection.getDriver(), source, input, tableName, detectTypes);
             operations.add(new QueryOperation(new Query(createQuery)));
         }
         
@@ -469,8 +469,8 @@ public class ImportTable implements Tool
         operations.add(batch);
         transaction = new TransactionOperation(operations.toArray(new AtomicOperation[operations.size()]));
    
-        connection.execute(conn -> {
-            transaction.execute(conn);
+        storedConnection.execute(connection -> {
+            transaction.execute(connection);
         });
         
         System.out.println("Import completed");
@@ -478,7 +478,7 @@ public class ImportTable implements Tool
     
     private boolean checkIfTableExists() throws SQLException 
     {
-        Table[] tables = connection.getSchemaLayout().getAllTables();
+        Table[] tables = storedConnection.getSchemaLayout().getAllTables();
         
         for(Table table : tables)
         {
